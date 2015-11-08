@@ -23,7 +23,7 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiModelList modelList;
     public int listWidth;
 
-    public int selectedIndex = -1;
+    public int selectedIndex = 0;
     public TabulaModel selectedModel;
 
     public GuiButton buttonHide;
@@ -43,7 +43,7 @@ public class GuiContainerShowcase extends GuiContainer {
         modelList = new GuiModelList(this, listWidth);
 
         BlockEntityShowcase blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
-        selectedIndex = blockEntity.modelId;
+        selectIndex(blockEntity.modelId);
         if (blockEntity.collapsedMenu) {
             buttonHide = new GuiButton(0, 0, 5, 20, 20, ">");
         } else {
@@ -105,11 +105,9 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void selectIndex(int index) {
-        if (index != selectedIndex) {
-            ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).modelId = index;
-            selectedIndex = index;
-            selectedModel = (index >= 0 && index <= Showcase.proxy.getModels().size()) ? Showcase.proxy.getModels().get(selectedIndex) : null;
-        }
+        ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).modelId = index;
+        selectedIndex = index;
+        selectedModel = (index >= 0 && index <= Showcase.proxy.getModels().size()) ? Showcase.proxy.getModels().get(selectedIndex) : null;
     }
 
     public boolean isSelected(int index) {

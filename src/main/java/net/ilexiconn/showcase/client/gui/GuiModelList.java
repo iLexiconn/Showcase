@@ -68,7 +68,7 @@ public class GuiModelList extends GuiScrollingList {
         fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getCubeCount() + " cubes", listWidth - 42), left + 36, slotTop + 22, 0xffffff);
 
         GlStateManager.pushMatrix();
-        startGlScissor(2, slotTop, 32, 32);
+        startGlScissor((int) (2 + translation), slotTop, 32, 32);
         GlStateManager.translate(20f, slotTop + 8f, 512f);
         GlStateManager.scale(-10f, 10f, 10f);
         GlStateManager.rotate(180f, 0f, 1f, 0f);
