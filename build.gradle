@@ -1,0 +1,61 @@
+plugins {
+    id "net.minecraftforge.gradle.forge" version "2.0.2"
+    //id "com.matthewprenger.cursegradle" version "1.0.3"
+    //id "maven-publish"
+}
+
+ext.configFile = file "build.properties"
+configFile.withReader {
+    def prop = new Properties()
+    prop.load(it)
+    project.ext.config = new ConfigSlurper().parse prop
+}
+
+def secretFile = file "secret.properties"
+project.ext.secret = null
+if (secretFile.exists()) {
+    secretFile.withReader {
+        def prop = new Properties()
+        prop.load(it)
+        project.ext.secret = new ConfigSlurper().parse prop
+    }
+}
+
+version = config.mod_version
+group = config.mod_group
+archivesBaseName = config.mod_name
+sourceCompatibility = targetCompatibility = 1.6
+
+minecraft {
+    version = config.minecraft_version + "-" + config.forge_version
+    runDir = "minecraft"
+    mappings = "snapshot_20141130"
+    replace '${version}', project.version
+}
+
+repositories {
+    mavenCentral()
+    maven {
+        name = "ilexiconn"
+        url = "http://maven.ilexiconn.net/"
+    }
+}
+
+dependencies {
+    compile "net.ilexiconn:llibrary:${config.llibrary_version}-${config.minecraft_version}:dev"
+}
+
+processResources {
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+        expand "version": project.version
+        expand "mcversion": project.minecraft.version
+    }
+
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
+    }
+}

@@ -1,0 +1,18 @@
+[
+    {
+        "modid": "showcase",
+        "name": "Showcase",
+        "description": "Showcase your Tabula models",
+        "version": "${version}",
+        "mcversion": "1.8",
+        "url": "https://ilexiconn.net/",
+        "authorList": [
+            "iLexiconn"
+        ],
+        "credits": "",
+        "dependencies": [
+            "llibrary@[0.5.0-1.8,)"
+        ],
+        "useDependencyInformation": true
+    }
+]
