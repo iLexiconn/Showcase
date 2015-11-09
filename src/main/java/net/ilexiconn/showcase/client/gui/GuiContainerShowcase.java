@@ -2,6 +2,7 @@ package net.ilexiconn.showcase.client.gui;
 
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.client.model.ModelError;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
@@ -13,6 +14,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
@@ -26,6 +28,9 @@ public class GuiContainerShowcase extends GuiContainer {
     public BlockEntityShowcase blockEntity;
     public GuiModelList modelList;
     public int listWidth;
+
+    public ModelError errorModel = new ModelError();
+    public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
 
     public int selectedIndex = 0;
     public TabulaModel selectedModel;
@@ -42,14 +47,14 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public void initGui() {
         super.initGui();
-        for (TabulaModel model : Showcase.proxy.getModels()) {
+        for (TabulaModel model : Showcase.proxy.getTabulaModels()) {
             listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getModelName()));
             listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getAuthorName()));
         }
         listWidth = Math.min(listWidth, 150);
         modelList = new GuiModelList(this, listWidth);
 
-        selectIndex(blockEntity.modelId);
+        selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
         if (blockEntity.collapsedMenu) {
             buttonHide = new GuiButton(0, 0, 5, 20, 20, ">");
             modelList.forceTranslation(listWidth);
@@ -87,26 +92,29 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        if (Showcase.proxy.getModels().isEmpty()) {
+        if (Showcase.proxy.getTabulaModels().isEmpty()) {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
+            GlStateManager.pushMatrix();
+            GlStateManager.disableBlend();
+            GlStateManager.color(1f, 1f, 1f, 1f);
+            GlStateManager.translate(280f, 128f, 512f);
+            GlStateManager.translate(modelList.getTranslation() / 2, 0f, 0f);
+            GlStateManager.scale(-40f, 40f, 40f);
+            GlStateManager.rotate(180f, 0f, 1f, 0f);
+            GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
+            GlStateManager.rotate(45f, 0f, 1f, 0f);
+            GlStateManager.rotate(blockEntity.modelRotationCurrent, 0f, 1f, 0f);
             if (selectedModel != null) {
-                ModelJson model = (ModelJson) Showcase.proxy.getTabulaModel(selectedModel);
-                GlStateManager.pushMatrix();
-                GlStateManager.disableBlend();
-                GlStateManager.color(1f, 1f, 1f, 1f);
-                GlStateManager.translate(280f, 128f, 512f);
-                GlStateManager.translate(modelList.getTranslation() / 2, 0f, 0f);
-                GlStateManager.scale(-40f, 40f, 40f);
-                GlStateManager.rotate(180f, 0f, 1f, 0f);
-                GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
-                GlStateManager.rotate(45f, 0f, 1f, 0f);
-                GlStateManager.rotate(blockEntity.modelRotationCurrent, 0f, 1f, 0f);
+                ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(selectedModel);
                 GlStateManager.bindTexture(Showcase.proxy.getTextureId(selectedModel));
                 model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
-                GlStateManager.popMatrix();
+            } else {
+                mc.getTextureManager().bindTexture(errorTexture);
+                errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
             }
+            GlStateManager.popMatrix();
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
 
@@ -133,10 +141,10 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void selectIndex(int index) {
-        blockEntity.modelId = index;
+        blockEntity.modelName = Showcase.proxy.getModelName(index);
         selectedIndex = index;
-        selectedModel = (index >= 0 && index <= Showcase.proxy.getModels().size()) ? Showcase.proxy.getModels().get(selectedIndex) : null;
-        Showcase.networkWrapper.sendToServer(new MessageUpdateModel(selectedIndex, showcase.getBlockPos()));
+        selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
+        Showcase.networkWrapper.sendToServer(new MessageUpdateModel(blockEntity.modelName, showcase.getBlockPos()));
     }
 
     public boolean isSelected(int index) {

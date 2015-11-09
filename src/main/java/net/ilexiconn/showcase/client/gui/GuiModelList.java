@@ -42,7 +42,7 @@ public class GuiModelList extends GuiScrollingList {
     }
 
     public int getSize() {
-        return Showcase.proxy.getModels().size();
+        return Showcase.proxy.getTabulaModels().size();
     }
 
     public void elementClicked(int index, boolean doubleClick) {
@@ -65,8 +65,8 @@ public class GuiModelList extends GuiScrollingList {
 
     public void drawSlot(int index, int entryRight, int slotTop, int slotBuffer, Tessellator tessellator) {
         Minecraft mc = Minecraft.getMinecraft();
-        TabulaModel container = Showcase.proxy.getModels().get(index);
-        ModelJson model = (ModelJson) Showcase.proxy.getTabulaModel(container);
+        TabulaModel container = Showcase.proxy.getTabulaModel(index);
+        ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
         FontRenderer fontRenderer = mc.fontRendererObj;
 
         mc.getTextureManager().bindTexture(textureFont);

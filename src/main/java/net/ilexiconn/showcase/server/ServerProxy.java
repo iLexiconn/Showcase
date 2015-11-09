@@ -37,16 +37,28 @@ public class ServerProxy {
 
     }
 
-    public List<TabulaModel> getModels() {
+    public List<TabulaModel> getTabulaModels() {
         return null;
     }
 
-    public Object getTabulaModel(TabulaModel container) {
+    public TabulaModel getTabulaModel(int index) {
+        return null;
+    }
+
+    public Object getJsonModel(TabulaModel container) {
         return null;
     }
 
     public int getTextureId(TabulaModel container) {
         return -1;
+    }
+
+    public int getModelIndex(String name) {
+        return -1;
+    }
+
+    public String getModelName(int index) {
+        return null;
     }
 
     public Entity getDummyEntity() {

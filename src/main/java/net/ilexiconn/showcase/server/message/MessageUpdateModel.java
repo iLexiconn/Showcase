@@ -5,17 +5,18 @@ import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageUpdateModel extends AbstractMessage<MessageUpdateModel> {
-    public int modelId;
+    public String modelName;
     public BlockPos blockPos;
 
     public MessageUpdateModel() {
 
     }
 
-    public MessageUpdateModel(int id, BlockPos pos) {
-        modelId = id;
+    public MessageUpdateModel(String name, BlockPos pos) {
+        modelName = name;
         blockPos = pos;
     }
 
@@ -24,16 +25,16 @@ public class MessageUpdateModel extends AbstractMessage<MessageUpdateModel> {
     }
 
     public void handleServerMessage(MessageUpdateModel message, EntityPlayer player) {
-        ((BlockEntityShowcase) player.worldObj.getTileEntity(message.blockPos)).modelId = message.modelId;
+        ((BlockEntityShowcase) player.worldObj.getTileEntity(message.blockPos)).modelName = message.modelName;
     }
 
     public void fromBytes(ByteBuf buf) {
-        modelId = buf.readInt();
+        modelName = ByteBufUtils.readUTF8String(buf);
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(modelId);
+        ByteBufUtils.writeUTF8String(buf, modelName);
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());

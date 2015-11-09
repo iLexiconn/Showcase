@@ -39,6 +39,7 @@ public class ClientProxy extends ServerProxy {
     private List<TabulaModel> modelList;
     private Map<TabulaModel, ModelJson> modelMap = Maps.newHashMap();
     private Map<TabulaModel, Integer> textureMap = Maps.newHashMap();
+    private Map<String, Integer> nameMap = Maps.newHashMap();
 
     public void preInit() {
         super.preInit();
@@ -60,12 +61,24 @@ public class ClientProxy extends ServerProxy {
         super.postInit();
     }
 
-    public List<TabulaModel> getModels() {
+    public List<TabulaModel> getTabulaModels() {
         return modelList;
     }
 
-    public Object getTabulaModel(TabulaModel container) {
-        if (!modelMap.containsKey(container)) {
+    public TabulaModel getTabulaModel(int index) {
+        if (index == -1) {
+            return null;
+        } else if (index > modelList.size()) {
+            return null;
+        } else {
+            return modelList.get(index);
+        }
+    }
+
+    public Object getJsonModel(TabulaModel container) {
+        if (container == null) {
+            return null;
+        } else if (!modelMap.containsKey(container)) {
             ModelJson model = new ModelJson(container);
             modelMap.put(container, model);
             return model;
@@ -75,12 +88,41 @@ public class ClientProxy extends ServerProxy {
     }
 
     public int getTextureId(TabulaModel container) {
-        if (!textureMap.containsKey(container)) {
+        if (container == null) {
+            return 0;
+        } else if (container.texture == null) {
+            return 0;
+        } else if (!textureMap.containsKey(container)) {
             int textureId = TextureUtil.uploadTextureImage(TextureUtil.glGenTextures(), container.texture);
             textureMap.put(container, textureId);
             return textureId;
         } else {
             return textureMap.get(container);
+        }
+    }
+
+    public int getModelIndex(String name) {
+        if (name == null) {
+            return -1;
+        } else if (!nameMap.containsKey(name)) {
+            for (TabulaModel model : modelList) {
+                if (model.getModelName().equals(name)) {
+                    int id = modelList.indexOf(model);
+                    nameMap.put(name, id);
+                    return id;
+                }
+            }
+            return -1;
+        } else {
+            return nameMap.get(name);
+        }
+    }
+
+    public String getModelName(int index) {
+        if (index == -1) {
+            return "";
+        } else {
+            return modelList.get(index).getModelName();
         }
     }
 
