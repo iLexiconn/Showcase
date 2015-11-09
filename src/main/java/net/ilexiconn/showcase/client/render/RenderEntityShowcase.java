@@ -30,6 +30,12 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         if (model != null) {
             GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
             model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+            if (showcase.modelMirrored) {
+                GlStateManager.scale(-1f, -1f, -1f);
+                GlStateManager.rotate(180f, 0f, 0f, 1f);
+                GlStateManager.rotate(180f, 0f, 1f, 0f);
+                model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+            }
         } else {
             bindTexture(errorTexture);
             errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);

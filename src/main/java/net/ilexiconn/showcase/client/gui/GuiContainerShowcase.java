@@ -6,6 +6,7 @@ import net.ilexiconn.showcase.client.model.ModelError;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
+import net.ilexiconn.showcase.server.message.MessageUpdateMirror;
 import net.ilexiconn.showcase.server.message.MessageUpdateModel;
 import net.ilexiconn.showcase.server.message.MessageUpdateRotation;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
@@ -38,6 +39,7 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonHide;
     public GuiButton buttonRotateLeft;
     public GuiButton buttonRotateRight;
+    public GuiButton buttonMirror;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
@@ -64,8 +66,10 @@ public class GuiContainerShowcase extends GuiContainer {
         }
         buttonList.add(buttonHide);
 
-        buttonList.add(buttonRotateLeft = new GuiButton(1, buttonHide.xPosition, height - 25, 20, 20, "<"));
-        buttonList.add(buttonRotateRight = new GuiButton(1, buttonHide.xPosition + 25, height - 25, 20, 20, ">"));
+        buttonList.add(buttonRotateLeft = new GuiButton(1, 0, height - 25, 20, 20, "<"));
+        buttonList.add(buttonRotateRight = new GuiButton(1, 0, height - 25, 20, 20, ">"));
+
+        buttonList.add(buttonMirror = new GuiButton(2, 0, height - 25, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
@@ -88,6 +92,10 @@ public class GuiContainerShowcase extends GuiContainer {
                 blockEntity.modelRotation -= 16f;
             }
             Showcase.networkWrapper.sendToServer(new MessageUpdateRotation(blockEntity.modelRotation, showcase.getBlockPos()));
+        } else if (button.id == 2) {
+            blockEntity.modelMirrored = !blockEntity.modelMirrored;
+            buttonMirror.displayString = blockEntity.modelMirrored ? "O" : "X";
+            Showcase.networkWrapper.sendToServer(new MessageUpdateMirror(blockEntity.modelMirrored, showcase.getBlockPos()));
         }
     }
 
@@ -120,16 +128,21 @@ public class GuiContainerShowcase extends GuiContainer {
 
             int menuSize = (int) (listWidth + modelList.getTranslation());
 
+            drawRect(menuSize, height - 40, width, height, 0xC0101010);
+
             buttonHide.xPosition = menuSize;
             GlStateManager.pushMatrix();
             GlStateManager.translate(modelList.getTranslation(), 0f, 0f);
             drawRect(listWidth, 0, listWidth + 25, 30, 0xC0101010);
             GlStateManager.popMatrix();
 
-            drawRect(menuSize, height - 40, menuSize + 50, height, 0xC0101010);
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 23, height - 35, 0xffffff);
-            buttonRotateLeft.xPosition = menuSize;
-            buttonRotateRight.xPosition = menuSize + 25;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 28, height - 35, 0xffffff);
+            buttonRotateLeft.xPosition = menuSize + 5;
+            buttonRotateRight.xPosition = menuSize + 30;
+
+            int positionMiror = menuSize + (width - menuSize) / 4;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMiror + 10, height - 35, 0xffffff);
+            buttonMirror.xPosition = positionMiror;
         }
     }
 

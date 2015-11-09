@@ -11,6 +11,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockEntityShowcase extends TileEntity {
     public String modelName = "";
+    public boolean modelMirrored = false;
 
     public float modelRotation = 0f;
     public float modelRotationCurrent = 0f;
@@ -26,6 +27,7 @@ public class BlockEntityShowcase extends TileEntity {
         super.readFromNBT(compound);
         modelName = compound.getString("ModelName");
         modelRotation = compound.getFloat("ModelRotation");
+        modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
     }
 
@@ -33,6 +35,7 @@ public class BlockEntityShowcase extends TileEntity {
         super.writeToNBT(compound);
         compound.setString("ModelName", modelName);
         compound.setFloat("ModelRotation", modelRotation);
+        compound.setBoolean("ModelMirrored", modelMirrored);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
     }
 
