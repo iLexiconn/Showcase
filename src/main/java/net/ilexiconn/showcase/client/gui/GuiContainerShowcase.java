@@ -149,9 +149,7 @@ public class GuiContainerShowcase extends GuiContainer {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
-            modelList.drawScreen(mouseX, mouseY, partialTicks);
             int menuSize = (int) (listWidth + modelList.getTranslation());
-
             GlStateManager.pushMatrix();
             startGlScissor(menuSize, 0, width, height - 40);
             GlStateManager.enableBlend();
@@ -180,6 +178,9 @@ public class GuiContainerShowcase extends GuiContainer {
             }
             endGlScissor();
             GlStateManager.popMatrix();
+
+            modelList.drawScreen(mouseX, mouseY, partialTicks);
+            menuSize = (int) (listWidth + modelList.getTranslation());
 
             drawRect(menuSize, height - 40, width, height, 0xC0101010);
 
