@@ -46,7 +46,9 @@ public class GuiModelList extends GuiScrollingList {
     }
 
     public void elementClicked(int index, boolean doubleClick) {
-        parent.selectIndex(index);
+        if (mouseX < listWidth + translation) {
+            parent.selectIndex(index);
+        }
     }
 
     public boolean isSelected(int index) {

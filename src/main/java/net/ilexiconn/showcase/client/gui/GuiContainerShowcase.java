@@ -29,6 +29,8 @@ public class GuiContainerShowcase extends GuiContainer {
     public TabulaModel selectedModel;
 
     public GuiButton buttonHide;
+    public GuiButton buttonRotateLeft;
+    public GuiButton buttonRotateRight;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
@@ -55,6 +57,9 @@ public class GuiContainerShowcase extends GuiContainer {
             modelList.forceTranslation(0);
         }
         buttonList.add(buttonHide);
+
+        buttonList.add(buttonRotateLeft = new GuiButton(1, buttonHide.xPosition, height - 25, 20, 20, "<"));
+        buttonList.add(buttonRotateRight = new GuiButton(1, buttonHide.xPosition + 25, height - 25, 20, 20, ">"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
@@ -96,11 +101,19 @@ public class GuiContainerShowcase extends GuiContainer {
             }
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
-            buttonHide.xPosition = (int) (listWidth + modelList.getTranslation());
+
+            int menuSize = (int) (listWidth + modelList.getTranslation());
+
+            buttonHide.xPosition = menuSize;
             GlStateManager.pushMatrix();
             GlStateManager.translate(modelList.getTranslation(), 0f, 0f);
             drawRect(listWidth, 0, listWidth + 25, 30, 0xC0101010);
             GlStateManager.popMatrix();
+
+            drawRect(menuSize, height - 40, menuSize + 50, height, 0xC0101010);
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 23, height - 35, 0xffffff);
+            buttonRotateLeft.xPosition = menuSize;
+            buttonRotateRight.xPosition = menuSize + 25;
         }
     }
 

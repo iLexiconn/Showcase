@@ -1,3 +1,4 @@
 tile.showcase.name=Showcase
 
 gui.showcase.empty=Showcase couldn't find any models!
+gui.showcase.rotate=Rotate
