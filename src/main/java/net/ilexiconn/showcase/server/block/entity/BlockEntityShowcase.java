@@ -11,6 +11,10 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockEntityShowcase extends TileEntity {
     public int modelId = 0;
+
+    public float modelRotation = 0f;
+    public float modelRotationCurrent = 0f;
+
     public boolean collapsedMenu = false;
 
     @SideOnly(Side.CLIENT)
@@ -21,12 +25,14 @@ public class BlockEntityShowcase extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         modelId = compound.getInteger("ModelId");
+        modelRotation = compound.getFloat("ModelRotation");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
     }
 
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setInteger("ModelId", modelId);
+        compound.setFloat("ModelRotation", modelRotation);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
     }
 

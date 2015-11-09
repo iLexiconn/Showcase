@@ -7,6 +7,7 @@ import net.ilexiconn.showcase.server.block.BlockShowcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
 import net.ilexiconn.showcase.server.message.MessageUpdateModel;
+import net.ilexiconn.showcase.server.message.MessageUpdateRotation;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
@@ -35,6 +36,7 @@ public class Showcase {
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
         AbstractMessage.registerMessage(networkWrapper, MessageUpdateModel.class, 0, Side.SERVER);
         AbstractMessage.registerMessage(networkWrapper, MessageUpdateMenu.class, 1, Side.SERVER);
+        AbstractMessage.registerMessage(networkWrapper, MessageUpdateRotation.class, 2, Side.SERVER);
 
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");

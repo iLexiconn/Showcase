@@ -6,6 +6,7 @@ import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
 import net.ilexiconn.showcase.server.message.MessageUpdateModel;
+import net.ilexiconn.showcase.server.message.MessageUpdateRotation;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -22,6 +23,7 @@ import java.io.IOException;
 public class GuiContainerShowcase extends GuiContainer {
     public Minecraft mc = Minecraft.getMinecraft();
     public ContainerShowcase showcase;
+    public BlockEntityShowcase blockEntity;
     public GuiModelList modelList;
     public int listWidth;
 
@@ -35,6 +37,7 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
         showcase = container;
+        blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());;
     }
 
     public void initGui() {
@@ -45,8 +48,6 @@ public class GuiContainerShowcase extends GuiContainer {
         }
         listWidth = Math.min(listWidth, 150);
         modelList = new GuiModelList(this, listWidth);
-
-        BlockEntityShowcase blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
 
         selectIndex(blockEntity.modelId);
         if (blockEntity.collapsedMenu) {
@@ -64,18 +65,24 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 0) {
-            BlockEntityShowcase blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
             if (blockEntity.collapsedMenu) {
                 modelList.setTranslation(0);
-                ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).collapsedMenu = false;
+                blockEntity.collapsedMenu = false;
                 buttonHide.displayString = "<";
                 Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(false, showcase.getBlockPos()));
             } else {
                 modelList.setTranslation(listWidth);
-                ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).collapsedMenu = true;
+                blockEntity.collapsedMenu = true;
                 buttonHide.displayString = ">";
                 Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(true, showcase.getBlockPos()));
             }
+        } else if (button.id == 1) {
+            if (button == buttonRotateLeft) {
+                blockEntity.modelRotation += 16f;
+            } else {
+                blockEntity.modelRotation -= 16f;
+            }
+            Showcase.networkWrapper.sendToServer(new MessageUpdateRotation(blockEntity.modelRotation, showcase.getBlockPos()));
         }
     }
 
@@ -95,6 +102,7 @@ public class GuiContainerShowcase extends GuiContainer {
                 GlStateManager.rotate(180f, 0f, 1f, 0f);
                 GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
                 GlStateManager.rotate(45f, 0f, 1f, 0f);
+                GlStateManager.rotate(blockEntity.modelRotationCurrent, 0f, 1f, 0f);
                 GlStateManager.bindTexture(Showcase.proxy.getTextureId(selectedModel));
                 model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
                 GlStateManager.popMatrix();
@@ -125,7 +133,7 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void selectIndex(int index) {
-        ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).modelId = index;
+        blockEntity.modelId = index;
         selectedIndex = index;
         selectedModel = (index >= 0 && index <= Showcase.proxy.getModels().size()) ? Showcase.proxy.getModels().get(selectedIndex) : null;
         Showcase.networkWrapper.sendToServer(new MessageUpdateModel(selectedIndex, showcase.getBlockPos()));
