@@ -5,10 +5,7 @@ import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.client.model.ModelError;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
-import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
-import net.ilexiconn.showcase.server.message.MessageUpdateMirror;
-import net.ilexiconn.showcase.server.message.MessageUpdateModel;
-import net.ilexiconn.showcase.server.message.MessageUpdateRotation;
+import net.ilexiconn.showcase.server.message.*;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -40,6 +37,8 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonRotateLeft;
     public GuiButton buttonRotateRight;
     public GuiButton buttonMirror;
+    public GuiButton buttonScalePlus;
+    public GuiButton buttonScaleMinus;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
@@ -70,6 +69,9 @@ public class GuiContainerShowcase extends GuiContainer {
         buttonList.add(buttonRotateRight = new GuiButton(1, 0, height - 25, 20, 20, ">"));
 
         buttonList.add(buttonMirror = new GuiButton(2, 0, height - 25, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
+
+        buttonList.add(buttonScalePlus = new GuiButton(3, 0, height - 25, 20, 20, "^"));
+        buttonList.add(buttonScaleMinus = new GuiButton(3, 0, height - 25, 20, 20, "v"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
@@ -87,15 +89,22 @@ public class GuiContainerShowcase extends GuiContainer {
             }
         } else if (button.id == 1) {
             if (button == buttonRotateLeft) {
-                blockEntity.modelRotation += 16f;
+                blockEntity.modelRotation += 45f;
             } else {
-                blockEntity.modelRotation -= 16f;
+                blockEntity.modelRotation -= 45f;
             }
             Showcase.networkWrapper.sendToServer(new MessageUpdateRotation(blockEntity.modelRotation, showcase.getBlockPos()));
         } else if (button.id == 2) {
             blockEntity.modelMirrored = !blockEntity.modelMirrored;
             buttonMirror.displayString = blockEntity.modelMirrored ? "O" : "X";
             Showcase.networkWrapper.sendToServer(new MessageUpdateMirror(blockEntity.modelMirrored, showcase.getBlockPos()));
+        } else if (button.id == 3) {
+            if (button == buttonScalePlus) {
+                blockEntity.modelScale += 0.1f;
+            } else {
+                blockEntity.modelScale -= 0.1f;
+            }
+            Showcase.networkWrapper.sendToServer(new MessageUpdateScale(blockEntity.modelScale, showcase.getBlockPos()));
         }
     }
 
@@ -113,6 +122,7 @@ public class GuiContainerShowcase extends GuiContainer {
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
             GlStateManager.rotate(45f, 0f, 1f, 0f);
+            GlStateManager.scale(blockEntity.modelScaleCurrent, blockEntity.modelScaleCurrent, blockEntity.modelScaleCurrent);
             GlStateManager.rotate(blockEntity.modelRotationCurrent, 0f, 1f, 0f);
             if (selectedModel != null) {
                 ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(selectedModel);
@@ -140,9 +150,14 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateLeft.xPosition = menuSize + 5;
             buttonRotateRight.xPosition = menuSize + 30;
 
-            int positionMiror = menuSize + (width - menuSize) / 4;
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMiror + 10, height - 35, 0xffffff);
-            buttonMirror.xPosition = positionMiror;
+            int positionMirror = menuSize + (width - menuSize) / 4;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, height - 35, 0xffffff);
+            buttonMirror.xPosition = positionMirror;
+
+            int positionScale = menuSize + (width - menuSize) / 4 * 2;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 22, height - 35, 0xffffff);
+            buttonScalePlus.xPosition = positionScale;
+            buttonScaleMinus.xPosition = positionScale + 25;
         }
     }
 

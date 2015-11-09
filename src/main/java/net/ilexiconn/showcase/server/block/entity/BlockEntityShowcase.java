@@ -16,6 +16,9 @@ public class BlockEntityShowcase extends TileEntity {
     public float modelRotation = 0f;
     public float modelRotationCurrent = 0f;
 
+    public float modelScale = 1f;
+    public float modelScaleCurrent = 1f;
+
     public boolean collapsedMenu = false;
 
     @SideOnly(Side.CLIENT)
@@ -27,6 +30,9 @@ public class BlockEntityShowcase extends TileEntity {
         super.readFromNBT(compound);
         modelName = compound.getString("ModelName");
         modelRotation = compound.getFloat("ModelRotation");
+        modelRotationCurrent = modelRotation;
+        modelScale = compound.getFloat("ModelScale");
+        modelScaleCurrent = modelScale;
         modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
     }
