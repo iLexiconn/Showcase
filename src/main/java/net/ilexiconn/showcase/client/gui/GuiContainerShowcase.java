@@ -98,11 +98,17 @@ public class GuiContainerShowcase extends GuiContainer {
                 } else {
                     blockEntity.modelRotation += 1;
                 }
+                if (blockEntity.modelRotation > 16) {
+                        blockEntity.modelRotation = 16;
+                }
             } else {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelRotation -= 4;
                 } else {
                     blockEntity.modelRotation -= 1;
+                }
+                if (blockEntity.modelRotation < 0) {
+                    blockEntity.modelRotation = 0;
                 }
             }
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
@@ -114,10 +120,26 @@ public class GuiContainerShowcase extends GuiContainer {
             Showcase.networkWrapper.sendToServer(new MessageUpdateMirror(blockEntity.modelMirrored, showcase.getBlockPos()));
         } else if (button.id == 3) {
             if (button == buttonScalePlus) {
-                blockEntity.modelScale += 1;
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelScale += 4;
+                } else {
+                    blockEntity.modelScale += 1;
+                }
+                if (blockEntity.modelScale > 32) {
+                    blockEntity.modelScale = 32;
+                }
             } else {
-                blockEntity.modelScale -= 1;
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelScale -= 4;
+                } else {
+                    blockEntity.modelScale -= 1;
+                }
+                if (blockEntity.modelScale < 0) {
+                    blockEntity.modelScale = 0;
+                }
             }
+            buttonScalePlus.enabled = blockEntity.modelScale <= 31;
+            buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdateScale(blockEntity.modelScale, showcase.getBlockPos()));
         }
     }
@@ -138,7 +160,7 @@ public class GuiContainerShowcase extends GuiContainer {
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
             GlStateManager.rotate(45f, 0f, 1f, 0f);
-            GlStateManager.scale(blockEntity.modelScaleCurrent + 1, blockEntity.modelScaleCurrent + 1, blockEntity.modelScaleCurrent + 1);
+            GlStateManager.scale((blockEntity.modelScaleCurrent + 1) / 8, (blockEntity.modelScaleCurrent + 1) / 8, (blockEntity.modelScaleCurrent + 1) / 8);
             GlStateManager.rotate(blockEntity.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
             if (selectedModel != null) {
                 ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(selectedModel);
