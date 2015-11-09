@@ -4,6 +4,8 @@ import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
+import net.ilexiconn.showcase.server.message.MessageUpdateMenu;
+import net.ilexiconn.showcase.server.message.MessageUpdateModel;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -43,11 +45,14 @@ public class GuiContainerShowcase extends GuiContainer {
         modelList = new GuiModelList(this, listWidth);
 
         BlockEntityShowcase blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
+
         selectIndex(blockEntity.modelId);
         if (blockEntity.collapsedMenu) {
             buttonHide = new GuiButton(0, 0, 5, 20, 20, ">");
+            modelList.forceTranslation(listWidth);
         } else {
             buttonHide = new GuiButton(0, listWidth, 5, 20, 20, "<");
+            modelList.forceTranslation(0);
         }
         buttonList.add(buttonHide);
     }
@@ -56,13 +61,15 @@ public class GuiContainerShowcase extends GuiContainer {
         if (button.id == 0) {
             BlockEntityShowcase blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
             if (blockEntity.collapsedMenu) {
-                modelList.setTranslation(listWidth);
-                blockEntity.collapsedMenu = !blockEntity.collapsedMenu;
-                buttonHide.displayString = ">";
-            } else {
                 modelList.setTranslation(0);
-                blockEntity.collapsedMenu = !blockEntity.collapsedMenu;
+                ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).collapsedMenu = false;
                 buttonHide.displayString = "<";
+                Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(false, showcase.getBlockPos()));
+            } else {
+                modelList.setTranslation(listWidth);
+                ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).collapsedMenu = true;
+                buttonHide.displayString = ">";
+                Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(true, showcase.getBlockPos()));
             }
         }
     }
@@ -108,6 +115,7 @@ public class GuiContainerShowcase extends GuiContainer {
         ((BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos())).modelId = index;
         selectedIndex = index;
         selectedModel = (index >= 0 && index <= Showcase.proxy.getModels().size()) ? Showcase.proxy.getModels().get(selectedIndex) : null;
+        Showcase.networkWrapper.sendToServer(new MessageUpdateModel(selectedIndex, showcase.getBlockPos()));
     }
 
     public boolean isSelected(int index) {

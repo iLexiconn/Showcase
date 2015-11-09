@@ -36,6 +36,11 @@ public class GuiModelList extends GuiScrollingList {
         return translation;
     }
 
+    public void forceTranslation(float forcedTranslation) {
+        translation = -forcedTranslation;
+        translationTarget = forcedTranslation;
+    }
+
     public int getSize() {
         return Showcase.proxy.getModels().size();
     }
