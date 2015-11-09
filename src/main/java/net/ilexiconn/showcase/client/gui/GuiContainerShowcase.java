@@ -149,12 +149,14 @@ public class GuiContainerShowcase extends GuiContainer {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
+            modelList.drawScreen(mouseX, mouseY, partialTicks);
             int menuSize = (int) (listWidth + modelList.getTranslation());
+
             GlStateManager.pushMatrix();
             startGlScissor(menuSize, 0, width, height - 40);
             GlStateManager.enableBlend();
             GlStateManager.color(1f, 1f, 1f, 1f);
-            GlStateManager.translate(width / 3 * 2, height / 2, 512f);
+            GlStateManager.translate(width / 2 + 80, (height - 40) / 2, 512f);
             GlStateManager.translate(modelList.getTranslation() / 2, 0f, 0f);
             GlStateManager.scale(-40f, 40f, 40f);
             GlStateManager.rotate(180f, 0f, 1f, 0f);
@@ -179,7 +181,6 @@ public class GuiContainerShowcase extends GuiContainer {
             endGlScissor();
             GlStateManager.popMatrix();
 
-            modelList.drawScreen(mouseX, mouseY, partialTicks);
             drawRect(menuSize, height - 40, width, height, 0xC0101010);
 
             buttonHide.xPosition = menuSize;
@@ -192,14 +193,13 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateLeft.xPosition = menuSize + 5;
             buttonRotateRight.xPosition = menuSize + 30;
 
-            int positionMirror = menuSize + (width - menuSize) / 4;
+            int positionMirror = menuSize - 10 + (width - menuSize) / 2;
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, height - 35, 0xffffff);
             buttonMirror.xPosition = positionMirror;
 
-            int positionScale = menuSize + (width - menuSize) / 4 * 2;
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 22, height - 35, 0xffffff);
-            buttonScalePlus.xPosition = positionScale;
-            buttonScaleMinus.xPosition = positionScale + 25;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), width - 28, height - 35, 0xffffff);
+            buttonScalePlus.xPosition = width - 50;
+            buttonScaleMinus.xPosition = width - 25;
         }
     }
 
