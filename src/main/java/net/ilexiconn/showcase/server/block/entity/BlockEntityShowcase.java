@@ -13,11 +13,11 @@ public class BlockEntityShowcase extends TileEntity {
     public String modelName = "";
     public boolean modelMirrored = false;
 
-    public float modelRotation = 0f;
+    public int modelRotation = 0;
     public float modelRotationCurrent = 0f;
 
-    public float modelScale = 1f;
-    public float modelScaleCurrent = 1f;
+    public int modelScale = 0;
+    public float modelScaleCurrent = 0f;
 
     public boolean collapsedMenu = false;
 
@@ -29,18 +29,20 @@ public class BlockEntityShowcase extends TileEntity {
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         modelName = compound.getString("ModelName");
-        modelRotation = compound.getFloat("ModelRotation");
-        modelRotationCurrent = modelRotation;
-        modelScale = compound.getFloat("ModelScale");
-        modelScaleCurrent = modelScale;
+        modelRotation = compound.getInteger("ModelRotation");
+        modelScale = compound.getInteger("ModelScale");
         modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
+
+        modelRotationCurrent = modelRotation;
+        modelScaleCurrent = modelScale;
     }
 
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString("ModelName", modelName);
-        compound.setFloat("ModelRotation", modelRotation);
+        compound.setInteger("ModelRotation", modelRotation);
+        compound.setInteger("ModelScale", modelScale);
         compound.setBoolean("ModelMirrored", modelMirrored);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
     }

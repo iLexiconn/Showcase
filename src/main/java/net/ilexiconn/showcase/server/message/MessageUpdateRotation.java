@@ -7,14 +7,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 
 public class MessageUpdateRotation extends AbstractMessage<MessageUpdateRotation> {
-    public float modelRotation;
+    public int modelRotation;
     public BlockPos blockPos;
 
     public MessageUpdateRotation() {
 
     }
 
-    public MessageUpdateRotation(float rotation, BlockPos pos) {
+    public MessageUpdateRotation(int rotation, BlockPos pos) {
         modelRotation = rotation;
         blockPos = pos;
     }
@@ -28,12 +28,12 @@ public class MessageUpdateRotation extends AbstractMessage<MessageUpdateRotation
     }
 
     public void fromBytes(ByteBuf buf) {
-        modelRotation = buf.readFloat();
+        modelRotation = buf.readInt();
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
     }
 
     public void toBytes(ByteBuf buf) {
-        buf.writeFloat(modelRotation);
+        buf.writeInt(modelRotation);
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());
         buf.writeInt(blockPos.getZ());

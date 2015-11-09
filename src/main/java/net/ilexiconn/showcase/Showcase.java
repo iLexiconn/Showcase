@@ -1,10 +1,12 @@
 package net.ilexiconn.showcase;
 
+import net.ilexiconn.llibrary.common.config.ConfigHelper;
 import net.ilexiconn.llibrary.common.log.LoggerHelper;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.ilexiconn.showcase.server.ServerProxy;
 import net.ilexiconn.showcase.server.block.BlockShowcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
+import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
 import net.ilexiconn.showcase.server.message.*;
 import net.minecraft.block.Block;
 import net.minecraftforge.fml.common.Mod;
@@ -31,6 +33,8 @@ public class Showcase {
 
     @Mod.EventHandler
     public void preInit(FMLPreInitializationEvent event) {
+        ConfigHelper.registerConfigHandler("showcase", event.getSuggestedConfigurationFile(), new ShowcaseConfig());
+
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
         AbstractMessage.registerMessage(networkWrapper, MessageUpdateModel.class, 0, Side.SERVER);
         AbstractMessage.registerMessage(networkWrapper, MessageUpdateMenu.class, 1, Side.SERVER);

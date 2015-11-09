@@ -9,12 +9,14 @@ import net.ilexiconn.showcase.server.message.*;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -67,6 +69,8 @@ public class GuiContainerShowcase extends GuiContainer {
 
         buttonList.add(buttonRotateLeft = new GuiButton(1, 0, height - 25, 20, 20, "<"));
         buttonList.add(buttonRotateRight = new GuiButton(1, 0, height - 25, 20, 20, ">"));
+        buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
+        buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
 
         buttonList.add(buttonMirror = new GuiButton(2, 0, height - 25, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
 
@@ -89,10 +93,20 @@ public class GuiContainerShowcase extends GuiContainer {
             }
         } else if (button.id == 1) {
             if (button == buttonRotateLeft) {
-                blockEntity.modelRotation += 45f;
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelRotation += 4;
+                } else {
+                    blockEntity.modelRotation += 1;
+                }
             } else {
-                blockEntity.modelRotation -= 45f;
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelRotation -= 4;
+                } else {
+                    blockEntity.modelRotation -= 1;
+                }
             }
+            buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
+            buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdateRotation(blockEntity.modelRotation, showcase.getBlockPos()));
         } else if (button.id == 2) {
             blockEntity.modelMirrored = !blockEntity.modelMirrored;
@@ -100,9 +114,9 @@ public class GuiContainerShowcase extends GuiContainer {
             Showcase.networkWrapper.sendToServer(new MessageUpdateMirror(blockEntity.modelMirrored, showcase.getBlockPos()));
         } else if (button.id == 3) {
             if (button == buttonScalePlus) {
-                blockEntity.modelScale += 0.1f;
+                blockEntity.modelScale += 1;
             } else {
-                blockEntity.modelScale -= 0.1f;
+                blockEntity.modelScale -= 1;
             }
             Showcase.networkWrapper.sendToServer(new MessageUpdateScale(blockEntity.modelScale, showcase.getBlockPos()));
         }
@@ -113,31 +127,37 @@ public class GuiContainerShowcase extends GuiContainer {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
+            int menuSize = (int) (listWidth + modelList.getTranslation());
             GlStateManager.pushMatrix();
-            GlStateManager.disableBlend();
+            startGlScissor(menuSize, 0, width, height - 40);
+            GlStateManager.enableBlend();
             GlStateManager.color(1f, 1f, 1f, 1f);
-            GlStateManager.translate(280f, 128f, 512f);
+            GlStateManager.translate(width / 3 * 2, height / 2, 512f);
             GlStateManager.translate(modelList.getTranslation() / 2, 0f, 0f);
             GlStateManager.scale(-40f, 40f, 40f);
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
             GlStateManager.rotate(45f, 0f, 1f, 0f);
-            GlStateManager.scale(blockEntity.modelScaleCurrent, blockEntity.modelScaleCurrent, blockEntity.modelScaleCurrent);
-            GlStateManager.rotate(blockEntity.modelRotationCurrent, 0f, 1f, 0f);
+            GlStateManager.scale(blockEntity.modelScaleCurrent + 1, blockEntity.modelScaleCurrent + 1, blockEntity.modelScaleCurrent + 1);
+            GlStateManager.rotate(blockEntity.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
             if (selectedModel != null) {
                 ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(selectedModel);
                 GlStateManager.bindTexture(Showcase.proxy.getTextureId(selectedModel));
                 model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                if (blockEntity.modelMirrored) {
+                    GlStateManager.scale(-1f, -1f, -1f);
+                    GlStateManager.rotate(180f, 0f, 0f, 1f);
+                    GlStateManager.rotate(180f, 0f, 1f, 0f);
+                    model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                }
             } else {
                 mc.getTextureManager().bindTexture(errorTexture);
                 errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
             }
+            endGlScissor();
             GlStateManager.popMatrix();
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
-
-            int menuSize = (int) (listWidth + modelList.getTranslation());
-
             drawRect(menuSize, height - 40, width, height, 0xC0101010);
 
             buttonHide.xPosition = menuSize;
@@ -177,5 +197,18 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public boolean isSelected(int index) {
         return index == selectedIndex;
+    }
+
+    public void startGlScissor(int x, int y, int width, int height) {
+        Minecraft mc = Minecraft.getMinecraft();
+        ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        double scaleW = (double) mc.displayWidth / resolution.getScaledWidth_double();
+        double scaleH = (double) mc.displayHeight / resolution.getScaledHeight_double();
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glScissor((int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH)), (int) Math.floor((double) (x + width) * scaleW) - (int) Math.floor((double) x * scaleW), (int) Math.floor((double) mc.displayHeight - ((double) y * scaleH)) - (int) Math.floor((double) mc.displayHeight - ((double) (y + height) * scaleH))); //starts from lower left corner (minecraft starts from upper left)
+    }
+
+    public void endGlScissor() {
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 }

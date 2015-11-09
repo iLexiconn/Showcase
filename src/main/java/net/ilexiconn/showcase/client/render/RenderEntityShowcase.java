@@ -25,10 +25,11 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         TabulaModel container = Showcase.proxy.getTabulaModel(Showcase.proxy.getModelIndex(showcase.modelName));
         ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
         GlStateManager.pushMatrix();
+        GlStateManager.enableBlend();
         GlStateManager.translate(posX + 0.5f, posY + 1.5f, posZ + 0.5f);
         GlStateManager.rotate(180f, 0f, 0f, 1f);
-        GlStateManager.scale(showcase.modelScaleCurrent, showcase.modelScaleCurrent, showcase.modelScaleCurrent);
-        GlStateManager.rotate(showcase.modelRotationCurrent, 0f, 1f, 0f);
+        GlStateManager.scale((showcase.modelScaleCurrent + 1), showcase.modelScaleCurrent + 1, showcase.modelScaleCurrent + 1);
+        GlStateManager.rotate(showcase.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
         if (model != null) {
             GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
             model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
