@@ -32,9 +32,9 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         GlStateManager.enableBlend();
         GlStateManager.translate(posX + 0.5f, posY + 1.5f, posZ + 0.5f);
         GlStateManager.rotate(180f, 0f, 0f, 1f);
-        GlStateManager.translate(showcase.modelOffsetXCurrent / 4, showcase.modelOffsetYCurrent / 4, showcase.modelOffsetZCurrent / 4);
-        GlStateManager.scale((showcase.modelScaleCurrent + 1) / 8, (showcase.modelScaleCurrent + 1) / 8, (showcase.modelScaleCurrent + 1) / 8);
-        GlStateManager.rotate(showcase.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
+        GlStateManager.translate(showcase.modelOffsetXCurrent / 8, showcase.modelOffsetYCurrent / 8, showcase.modelOffsetZCurrent / 8);
+        GlStateManager.scale(showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16);
+        GlStateManager.rotate(showcase.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
         if (model != null) {
             GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
             model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);

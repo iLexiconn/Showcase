@@ -16,8 +16,8 @@ public class BlockEntityShowcase extends TileEntity {
     public int modelRotation = 0;
     public float modelRotationCurrent = 0f;
 
-    public int modelScale = 7;
-    public float modelScaleCurrent = 7f;
+    public int modelScale = 16;
+    public float modelScaleCurrent = 16f;
 
     public boolean collapsedMenu = false;
     public boolean drawBox = true;

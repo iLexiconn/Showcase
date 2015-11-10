@@ -1,6 +1,9 @@
 {
   "variants": {
-    "normal": {
+    "powered=true": {
+      "model": "showcase:showcase"
+    },
+    "powered=false": {
       "model": "showcase:showcase"
     }
   }
