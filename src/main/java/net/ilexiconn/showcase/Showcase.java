@@ -36,11 +36,7 @@ public class Showcase {
         ConfigHelper.registerConfigHandler("showcase", event.getSuggestedConfigurationFile(), new ShowcaseConfig());
 
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
-        AbstractMessage.registerMessage(networkWrapper, MessageUpdateModel.class, 0, Side.SERVER);
-        AbstractMessage.registerMessage(networkWrapper, MessageUpdateMenu.class, 1, Side.SERVER);
-        AbstractMessage.registerMessage(networkWrapper, MessageUpdateRotation.class, 2, Side.SERVER);
-        AbstractMessage.registerMessage(networkWrapper, MessageUpdateMirror.class, 3, Side.SERVER);
-        AbstractMessage.registerMessage(networkWrapper, MessageUpdateScale.class, 4, Side.SERVER);
+        AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 0, Side.SERVER);
 
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");

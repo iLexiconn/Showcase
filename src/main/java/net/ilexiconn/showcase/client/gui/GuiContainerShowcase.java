@@ -84,13 +84,12 @@ public class GuiContainerShowcase extends GuiContainer {
                 modelList.setTranslation(0);
                 blockEntity.collapsedMenu = false;
                 buttonHide.displayString = "<";
-                Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(false, showcase.getBlockPos()));
             } else {
                 modelList.setTranslation(listWidth);
                 blockEntity.collapsedMenu = true;
                 buttonHide.displayString = ">";
-                Showcase.networkWrapper.sendToServer(new MessageUpdateMenu(true, showcase.getBlockPos()));
             }
+            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.collapsedMenu, MessageData.MENU));
         } else if (button.id == 1) {
             if (button == buttonRotateLeft) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -113,11 +112,11 @@ public class GuiContainerShowcase extends GuiContainer {
             }
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
-            Showcase.networkWrapper.sendToServer(new MessageUpdateRotation(blockEntity.modelRotation, showcase.getBlockPos()));
+            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
         } else if (button.id == 2) {
             blockEntity.modelMirrored = !blockEntity.modelMirrored;
             buttonMirror.displayString = blockEntity.modelMirrored ? "O" : "X";
-            Showcase.networkWrapper.sendToServer(new MessageUpdateMirror(blockEntity.modelMirrored, showcase.getBlockPos()));
+            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelMirrored, MessageData.MIRROR));
         } else if (button.id == 3) {
             if (button == buttonScalePlus) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -140,7 +139,7 @@ public class GuiContainerShowcase extends GuiContainer {
             }
             buttonScalePlus.enabled = blockEntity.modelScale <= 31;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
-            Showcase.networkWrapper.sendToServer(new MessageUpdateScale(blockEntity.modelScale, showcase.getBlockPos()));
+            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
         }
     }
 
@@ -215,7 +214,7 @@ public class GuiContainerShowcase extends GuiContainer {
         blockEntity.modelName = Showcase.proxy.getModelName(index);
         selectedIndex = index;
         selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
-        Showcase.networkWrapper.sendToServer(new MessageUpdateModel(blockEntity.modelName, showcase.getBlockPos()));
+        Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelName, MessageData.NAME));
     }
 
     public boolean isSelected(int index) {
