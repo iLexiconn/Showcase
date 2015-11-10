@@ -20,6 +20,7 @@ public class BlockEntityShowcase extends TileEntity {
     public float modelScaleCurrent = 7f;
 
     public boolean collapsedMenu = false;
+    public boolean drawBox = true;
 
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
@@ -33,6 +34,7 @@ public class BlockEntityShowcase extends TileEntity {
         modelScale = compound.getInteger("ModelScale");
         modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
+        drawBox = compound.getBoolean("DrawBox");
 
         modelRotationCurrent = modelRotation;
         modelScaleCurrent = modelScale;
@@ -45,6 +47,7 @@ public class BlockEntityShowcase extends TileEntity {
         compound.setInteger("ModelScale", modelScale);
         compound.setBoolean("ModelMirrored", modelMirrored);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
+        compound.setBoolean("DrawBox", drawBox);
     }
 
     public Packet getDescriptionPacket() {

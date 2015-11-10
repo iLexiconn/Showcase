@@ -9,7 +9,8 @@ public enum MessageData {
     MENU("collapsedMenu", boolean.class),
     ROTATION("modelRotation", int.class),
     MIRROR("modelMirrored", boolean.class),
-    SCALE("modelScale", int.class);
+    SCALE("modelScale", int.class),
+    BOX("drawBox", boolean.class);
 
     private Field field;
     private Class<?> classType;

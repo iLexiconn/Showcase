@@ -5,14 +5,17 @@ import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.client.model.ModelError;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
-import net.ilexiconn.showcase.server.message.*;
+import net.ilexiconn.showcase.server.message.MessageData;
+import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.resources.I18n;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
@@ -31,6 +34,7 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public ModelError errorModel = new ModelError();
     public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
+    public AxisAlignedBB box = new AxisAlignedBB(-0.5f, 0.5f, -0.5f, 0.5f, 1.5f, 0.5f);
 
     public int selectedIndex = 0;
     public TabulaModel selectedModel;
@@ -41,11 +45,13 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonMirror;
     public GuiButton buttonScalePlus;
     public GuiButton buttonScaleMinus;
+    public GuiButton buttonBox;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
         showcase = container;
-        blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());;
+        blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
+        ;
     }
 
     public void initGui() {
@@ -59,10 +65,10 @@ public class GuiContainerShowcase extends GuiContainer {
 
         selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
         if (blockEntity.collapsedMenu) {
-            buttonHide = new GuiButton(0, 0, 5, 20, 20, ">");
+            buttonHide = new GuiButton(0, 5, 10, 20, 20, ">");
             modelList.forceTranslation(listWidth);
         } else {
-            buttonHide = new GuiButton(0, listWidth, 5, 20, 20, "<");
+            buttonHide = new GuiButton(0, listWidth + 5, 10, 20, 20, "<");
             modelList.forceTranslation(0);
         }
         buttonList.add(buttonHide);
@@ -72,10 +78,14 @@ public class GuiContainerShowcase extends GuiContainer {
         buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
         buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
 
-        buttonList.add(buttonMirror = new GuiButton(2, 0, height - 25, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
+        buttonList.add(buttonMirror = new GuiButton(2, 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
 
         buttonList.add(buttonScalePlus = new GuiButton(3, 0, height - 25, 20, 20, "^"));
         buttonList.add(buttonScaleMinus = new GuiButton(3, 0, height - 25, 20, 20, "v"));
+        buttonScalePlus.enabled = blockEntity.modelScale <= 31;
+        buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
+
+        buttonList.add(buttonBox = new GuiButton(4, 0, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
@@ -98,7 +108,7 @@ public class GuiContainerShowcase extends GuiContainer {
                     blockEntity.modelRotation += 1;
                 }
                 if (blockEntity.modelRotation > 16) {
-                        blockEntity.modelRotation = 16;
+                    blockEntity.modelRotation = 16;
                 }
             } else {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -140,6 +150,10 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonScalePlus.enabled = blockEntity.modelScale <= 31;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
+        } else if (button.id == 4) {
+            blockEntity.drawBox = !blockEntity.drawBox;
+            buttonBox.displayString = blockEntity.drawBox ? "O" : "X";
+            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.drawBox, MessageData.BOX));
         }
     }
 
@@ -150,11 +164,10 @@ public class GuiContainerShowcase extends GuiContainer {
         } else {
             int menuSize = (int) (listWidth + modelList.getTranslation());
             GlStateManager.pushMatrix();
-            startGlScissor(menuSize, 0, width, height - 40);
+            startGlScissor(menuSize, 40, width, height - 80);
             GlStateManager.enableBlend();
             GlStateManager.color(1f, 1f, 1f, 1f);
-            GlStateManager.translate(width / 2 + 80, (height - 40) / 2, 512f);
-            GlStateManager.translate(modelList.getTranslation() / 2, 0f, 0f);
+            GlStateManager.translate(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
             GlStateManager.scale(-40f, 40f, 40f);
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
@@ -175,18 +188,33 @@ public class GuiContainerShowcase extends GuiContainer {
                 mc.getTextureManager().bindTexture(errorTexture);
                 errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
             }
-            endGlScissor();
             GlStateManager.popMatrix();
+            if (blockEntity.drawBox) {
+                GlStateManager.pushMatrix();
+                GlStateManager.color(1f, 1f, 1f, 1f);
+                GlStateManager.translate(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
+                GlStateManager.scale(-40f, 40f, 40f);
+                GlStateManager.rotate(180f, 0f, 1f, 0f);
+                GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
+                GlStateManager.rotate(45f, 0f, 1f, 0f);
+                GlStateManager.disableTexture2D();
+                GlStateManager.disableLighting();
+                GlStateManager.disableCull();
+                GlStateManager.disableBlend();
+                RenderGlobal.drawOutlinedBoundingBox(box, 16777215);
+                GlStateManager.popMatrix();
+            }
+            endGlScissor();
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
             menuSize = (int) (listWidth + modelList.getTranslation());
 
             drawRect(menuSize, height - 40, width, height, 0xC0101010);
+            drawRect(menuSize, 0, width, 40, 0xC0101010);
 
-            buttonHide.xPosition = menuSize;
+            buttonHide.xPosition = menuSize + 5;
             GlStateManager.pushMatrix();
             GlStateManager.translate(modelList.getTranslation(), 0f, 0f);
-            drawRect(listWidth, 0, listWidth + 25, 30, 0xC0101010);
             GlStateManager.popMatrix();
 
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 28, height - 35, 0xffffff);
@@ -194,12 +222,15 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateRight.xPosition = menuSize + 30;
 
             int positionMirror = menuSize - 10 + (width - menuSize) / 2;
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, height - 35, 0xffffff);
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, 5, 0xffffff);
             buttonMirror.xPosition = positionMirror;
 
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), width - 28, height - 35, 0xffffff);
             buttonScalePlus.xPosition = width - 50;
             buttonScaleMinus.xPosition = width - 25;
+
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.box"), width - 15, 5, 0xffffff);
+            buttonBox.xPosition = width - 25;
         }
     }
 
