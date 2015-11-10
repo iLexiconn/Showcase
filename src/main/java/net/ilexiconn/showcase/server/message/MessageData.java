@@ -10,7 +10,10 @@ public enum MessageData {
     ROTATION("modelRotation", int.class),
     MIRROR("modelMirrored", boolean.class),
     SCALE("modelScale", int.class),
-    BOX("drawBox", boolean.class);
+    BOX("drawBox", boolean.class),
+    OFFSET_X("modelOffsetX", int.class),
+    OFFSET_Y("modelOffsetY", int.class),
+    OFFSET_Z("modelOffsetZ", int.class);
 
     private Field field;
     private Class<?> classType;

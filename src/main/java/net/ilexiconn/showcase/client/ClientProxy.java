@@ -53,12 +53,13 @@ public class ClientProxy extends ServerProxy {
     public void init() {
         super.init();
 
-        mc.getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(Showcase.blockShowcase), 0, new ModelResourceLocation("showcase:showcase", "inventory"));
         modelList = loadModelsFromDir(new File("." + File.separator + "mods" + File.separator + "tabula" + File.separator + "saves"));
     }
 
     public void postInit() {
         super.postInit();
+
+        mc.getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(Showcase.blockShowcase), 0, new ModelResourceLocation("showcase:showcase", "inventory"));
     }
 
     public List<TabulaModel> getTabulaModels() {

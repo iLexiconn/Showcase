@@ -22,6 +22,13 @@ public class BlockEntityShowcase extends TileEntity {
     public boolean collapsedMenu = false;
     public boolean drawBox = true;
 
+    public int modelOffsetX = 0;
+    public float modelOffsetXCurrent = 0f;
+    public int modelOffsetY = 0;
+    public float modelOffsetYCurrent = 0f;
+    public int modelOffsetZ = 0;
+    public float modelOffsetZCurrent = 0f;
+
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
@@ -35,9 +42,15 @@ public class BlockEntityShowcase extends TileEntity {
         modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
         drawBox = compound.getBoolean("DrawBox");
+        modelOffsetX = compound.getInteger("ModelOffsetX");
+        modelOffsetY = compound.getInteger("ModelOffsetY");
+        modelOffsetZ = compound.getInteger("ModelOffsetZ");
 
         modelRotationCurrent = modelRotation;
         modelScaleCurrent = modelScale;
+        modelOffsetXCurrent = modelOffsetX;
+        modelOffsetYCurrent = modelOffsetY;
+        modelOffsetZCurrent = modelOffsetZ;
     }
 
     public void writeToNBT(NBTTagCompound compound) {
@@ -48,12 +61,15 @@ public class BlockEntityShowcase extends TileEntity {
         compound.setBoolean("ModelMirrored", modelMirrored);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
         compound.setBoolean("DrawBox", drawBox);
+        compound.setInteger("ModelOffsetX", modelOffsetX);
+        compound.setInteger("ModelOffsetY", modelOffsetY);
+        compound.setInteger("ModelOffsetZ", modelOffsetZ);
     }
 
     public Packet getDescriptionPacket() {
         NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
-        return new S35PacketUpdateTileEntity(pos, 1, compound);
+        return new S35PacketUpdateTileEntity(pos, 0, compound);
     }
 
     public void onDataPacket(NetworkManager networkManager, S35PacketUpdateTileEntity packet) {

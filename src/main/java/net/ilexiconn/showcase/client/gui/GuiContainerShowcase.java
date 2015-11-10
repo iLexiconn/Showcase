@@ -47,11 +47,17 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonScaleMinus;
     public GuiButton buttonBox;
 
+    public GuiButton buttonOffsetLeft;
+    public GuiButton buttonOffsetRight;
+    public GuiButton buttonOffsetForward;
+    public GuiButton buttonOffsetBackward;
+    public GuiButton buttonOffsetUp;
+    public GuiButton buttonOffsetDown;
+
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
         showcase = container;
         blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
-        ;
     }
 
     public void initGui() {
@@ -65,31 +71,38 @@ public class GuiContainerShowcase extends GuiContainer {
 
         selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
         if (blockEntity.collapsedMenu) {
-            buttonHide = new GuiButton(0, 5, 10, 20, 20, ">");
+            buttonHide = new GuiButton(ButtonIds.HIDE.getId(), 5, 10, 20, 20, ">");
             modelList.forceTranslation(listWidth);
         } else {
-            buttonHide = new GuiButton(0, listWidth + 5, 10, 20, 20, "<");
+            buttonHide = new GuiButton(ButtonIds.HIDE.getId(), listWidth + 5, 10, 20, 20, "<");
             modelList.forceTranslation(0);
         }
         buttonList.add(buttonHide);
 
-        buttonList.add(buttonRotateLeft = new GuiButton(1, 0, height - 25, 20, 20, "<"));
-        buttonList.add(buttonRotateRight = new GuiButton(1, 0, height - 25, 20, 20, ">"));
+        buttonList.add(buttonRotateLeft = new GuiButton(ButtonIds.ROTATE.getId(), 0, height - 25, 20, 20, "<"));
+        buttonList.add(buttonRotateRight = new GuiButton(ButtonIds.ROTATE.getId(), 0, height - 25, 20, 20, ">"));
         buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
         buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
 
-        buttonList.add(buttonMirror = new GuiButton(2, 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
+        buttonList.add(buttonMirror = new GuiButton(ButtonIds.MIRROR.getId(), 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
 
-        buttonList.add(buttonScalePlus = new GuiButton(3, 0, height - 25, 20, 20, "^"));
-        buttonList.add(buttonScaleMinus = new GuiButton(3, 0, height - 25, 20, 20, "v"));
+        buttonList.add(buttonScalePlus = new GuiButton(ButtonIds.SCALE.getId(), 0, height - 25, 20, 20, "^"));
+        buttonList.add(buttonScaleMinus = new GuiButton(ButtonIds.SCALE.getId(), 0, height - 25, 20, 20, "v"));
         buttonScalePlus.enabled = blockEntity.modelScale <= 31;
         buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
 
-        buttonList.add(buttonBox = new GuiButton(4, 0, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
+        buttonList.add(buttonBox = new GuiButton(ButtonIds.BOX.getId(), width - 25, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
+
+        buttonList.add(buttonOffsetLeft = new GuiButton(ButtonIds.OFFSET.getId(), width - 75, height - 25, 20, 20, "<"));
+        buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.getId(), width - 25, height - 25, 20, 20, ">"));
+        buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.getId(), width - 50, height - 25, 20, 20, "v"));
+        buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.getId(), width - 50, height - 50, 20, 20, "^"));
+        buttonList.add(buttonOffsetUp = new GuiButton(ButtonIds.OFFSET.getId(), width - 67, height - 43, 12, 12, "^"));
+        buttonList.add(buttonOffsetDown = new GuiButton(ButtonIds.OFFSET.getId(), width - 25, height - 43, 12, 12, "v"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == 0) {
+        if (button.id == ButtonIds.HIDE.getId()) {
             if (blockEntity.collapsedMenu) {
                 modelList.setTranslation(0);
                 blockEntity.collapsedMenu = false;
@@ -100,7 +113,7 @@ public class GuiContainerShowcase extends GuiContainer {
                 buttonHide.displayString = ">";
             }
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.collapsedMenu, MessageData.MENU));
-        } else if (button.id == 1) {
+        } else if (button.id == ButtonIds.ROTATE.getId()) {
             if (button == buttonRotateLeft) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelRotation += 4;
@@ -123,11 +136,11 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
-        } else if (button.id == 2) {
+        } else if (button.id == ButtonIds.MIRROR.getId()) {
             blockEntity.modelMirrored = !blockEntity.modelMirrored;
             buttonMirror.displayString = blockEntity.modelMirrored ? "O" : "X";
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelMirrored, MessageData.MIRROR));
-        } else if (button.id == 3) {
+        } else if (button.id == ButtonIds.SCALE.getId()) {
             if (button == buttonScalePlus) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelScale += 4;
@@ -150,10 +163,54 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonScalePlus.enabled = blockEntity.modelScale <= 31;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
-        } else if (button.id == 4) {
+        } else if (button.id == ButtonIds.BOX.getId()) {
             blockEntity.drawBox = !blockEntity.drawBox;
             buttonBox.displayString = blockEntity.drawBox ? "O" : "X";
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.drawBox, MessageData.BOX));
+        } else if (button.id == ButtonIds.OFFSET.getId()) {
+            if (button == buttonOffsetLeft) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetX -= 4;
+                } else {
+                    blockEntity.modelOffsetX -= 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+            } else if (button == buttonOffsetRight) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetX += 4;
+                } else {
+                    blockEntity.modelOffsetX += 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+            } else if (button == buttonOffsetForward) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetZ -= 4;
+                } else {
+                    blockEntity.modelOffsetZ -= 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+            } else if (button == buttonOffsetBackward) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetZ += 4;
+                } else {
+                    blockEntity.modelOffsetZ += 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+            } else if (button == buttonOffsetUp) {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetY -= 4;
+                } else {
+                    blockEntity.modelOffsetY -= 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+            } else {
+                if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
+                    blockEntity.modelOffsetY += 4;
+                } else {
+                    blockEntity.modelOffsetY += 1;
+                }
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+            }
         }
     }
 
@@ -172,6 +229,7 @@ public class GuiContainerShowcase extends GuiContainer {
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
             GlStateManager.rotate(45f, 0f, 1f, 0f);
+            GlStateManager.translate(blockEntity.modelOffsetXCurrent / 4, blockEntity.modelOffsetYCurrent / 4, blockEntity.modelOffsetZCurrent / 4);
             GlStateManager.scale((blockEntity.modelScaleCurrent + 1) / 8, (blockEntity.modelScaleCurrent + 1) / 8, (blockEntity.modelScaleCurrent + 1) / 8);
             GlStateManager.rotate(blockEntity.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
             if (selectedModel != null) {
@@ -211,6 +269,7 @@ public class GuiContainerShowcase extends GuiContainer {
 
             drawRect(menuSize, height - 40, width, height, 0xC0101010);
             drawRect(menuSize, 0, width, 40, 0xC0101010);
+            drawRect(width - 80, height - 65, width, height - 40, 0xC0101010);
 
             buttonHide.xPosition = menuSize + 5;
             GlStateManager.pushMatrix();
@@ -225,12 +284,14 @@ public class GuiContainerShowcase extends GuiContainer {
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, 5, 0xffffff);
             buttonMirror.xPosition = positionMirror;
 
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), width - 28, height - 35, 0xffffff);
-            buttonScalePlus.xPosition = width - 50;
-            buttonScaleMinus.xPosition = width - 25;
+            int positionScale = menuSize - 10 + (width - menuSize) / 2;
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 10, height - 35, 0xffffff);
+            buttonScalePlus.xPosition = positionScale - 12;
+            buttonScaleMinus.xPosition = positionScale + 13;
 
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.box"), width - 15, 5, 0xffffff);
-            buttonBox.xPosition = width - 25;
+
+            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.offset"), width - 40, height - 60, 0xffffff);
         }
     }
 

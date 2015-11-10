@@ -19,7 +19,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = "showcase", name = "Showcase", version = "0.1.0")
+@Mod(modid = "showcase", name = "Showcase", version = "0.1.0-beta1")
 public class Showcase {
     @SidedProxy(serverSide = "net.ilexiconn.showcase.server.ServerProxy", clientSide = "net.ilexiconn.showcase.client.ClientProxy")
     public static ServerProxy proxy;

@@ -1,7 +1,6 @@
 plugins {
     id "net.minecraftforge.gradle.forge" version "2.0.2"
     //id "com.matthewprenger.cursegradle" version "1.0.3"
-    //id "maven-publish"
 }
 
 ext.configFile = file "build.properties"
@@ -59,3 +58,40 @@ processResources {
         exclude "mcmod.info"
     }
 }
+
+/*
+import groovy.json.JsonSlurper
+curseforge {
+    def url = "https://github.com/iLexiconn/Showcase/raw/version/versions.json".toURL()
+    def versions = new JsonSlurper().parseText url.text
+
+    def type = "release"
+    def latestVersion = ""
+    versions.versions.each{version, changelog -> latestVersion = version}
+    if (versions.beta && versions.beta == latestVersion) {
+        type = "beta"
+    }
+
+    if (secret) {
+        apiKey = secret.curseForgeApiKey
+    } else {
+        apiKey = ""
+    }
+
+    project {
+        id = "237789"
+
+        releaseType = type
+        changelog = versions.versions[versions.getAt(type)].join("\n")
+
+        addGameVersion config.minecraft_version
+
+        mainArtifact(jar) {
+            displayName = "Showcase " + config.mod_version + " for Minecraft " + config.minecraft_version
+        }
+
+        addArtifact(sourceJar) {
+            displayName = "Sources"
+        }
+    }
+}*/

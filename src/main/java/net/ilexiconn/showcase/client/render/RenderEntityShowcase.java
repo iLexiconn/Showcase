@@ -22,12 +22,17 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         BlockEntityShowcase showcase = (BlockEntityShowcase) tileEntity;
         showcase.modelRotationCurrent = AnimationHandler.smoothUpdate(showcase.modelRotationCurrent, showcase.modelRotation);
         showcase.modelScaleCurrent = AnimationHandler.smoothUpdate(showcase.modelScaleCurrent, showcase.modelScale);
+        showcase.modelOffsetXCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetXCurrent, showcase.modelOffsetX);
+        showcase.modelOffsetXCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetXCurrent, showcase.modelOffsetX);
+        showcase.modelOffsetYCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetYCurrent, showcase.modelOffsetY);
+        showcase.modelOffsetZCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetZCurrent, showcase.modelOffsetZ);
         TabulaModel container = Showcase.proxy.getTabulaModel(Showcase.proxy.getModelIndex(showcase.modelName));
         ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
         GlStateManager.pushMatrix();
         GlStateManager.enableBlend();
         GlStateManager.translate(posX + 0.5f, posY + 1.5f, posZ + 0.5f);
         GlStateManager.rotate(180f, 0f, 0f, 1f);
+        GlStateManager.translate(showcase.modelOffsetXCurrent / 4, showcase.modelOffsetYCurrent / 4, showcase.modelOffsetZCurrent / 4);
         GlStateManager.scale((showcase.modelScaleCurrent + 1) / 8, (showcase.modelScaleCurrent + 1) / 8, (showcase.modelScaleCurrent + 1) / 8);
         GlStateManager.rotate(showcase.modelRotationCurrent * 22.5f, 0f, 1f, 0f);
         if (model != null) {
