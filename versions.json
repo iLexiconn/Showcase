@@ -1,0 +1,10 @@
+{
+  "release": "0.1.0",
+  "versions": {
+    "0.1.0": [
+      "Initial release"
+    ]
+  },
+  "updateUrl": "https://bitly.com/llibrary",
+  "iconUrl": "http://i.imgur.com/N2CJ80g.png"
+}
