@@ -6,17 +6,24 @@ import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.RenderGlobal;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
 public class RenderEntityShowcase extends TileEntitySpecialRenderer {
     public ModelQuestionMark errorModel = new ModelQuestionMark();
     public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
+    public AxisAlignedBB box = new AxisAlignedBB(0f, 0f, 0f, 1f, 1f, 1f);
 
     public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float f, int i) {
         BlockEntityShowcase showcase = (BlockEntityShowcase) tileEntity;
@@ -29,7 +36,9 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         TabulaModel container = Showcase.proxy.getTabulaModel(Showcase.proxy.getModelIndex(showcase.modelName));
         ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
         GlStateManager.pushMatrix();
+        GlStateManager.color(1f, 1f, 1f, 1f);
         GlStateManager.enableBlend();
+        GlStateManager.enableLighting();
         GlStateManager.translate(posX + 0.5f, posY + 1.5f, posZ + 0.5f);
         GlStateManager.rotate(180f, 0f, 0f, 1f);
         GlStateManager.translate(showcase.modelOffsetXCurrent / 8, showcase.modelOffsetYCurrent / 8, showcase.modelOffsetZCurrent / 8);
@@ -49,5 +58,28 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
             errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
         }
         GlStateManager.popMatrix();
+        if (Minecraft.getMinecraft().getRenderManager().isDebugBoundingBox()) {
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(posX, posY, posZ);
+            GlStateManager.color(1f, 1f, 1f, 1f);
+            GlStateManager.disableTexture2D();
+            GlStateManager.disableLighting();
+            GlStateManager.disableCull();
+            GlStateManager.disableBlend();
+            RenderGlobal.drawOutlinedBoundingBox(box, 16777215);
+            GL11.glTranslated(-showcase.modelOffsetXCurrent / 8, -showcase.modelOffsetYCurrent / 8, showcase.modelOffsetZCurrent / 8);
+            RenderGlobal.drawOutlinedBoundingBox(box, 16777215);
+            Tessellator tessellator = Tessellator.getInstance();
+            WorldRenderer renderer = tessellator.getWorldRenderer();
+            renderer.startDrawing(GL11.GL_LINES);
+            renderer.addVertex(0.5d, 0.5d, 0.5d);
+            renderer.addVertex(showcase.modelOffsetXCurrent / 8 + 0.5d, showcase.modelOffsetYCurrent / 8 + 0.5d, -showcase.modelOffsetZCurrent / 8 + 0.5d);
+            tessellator.draw();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableLighting();
+            GlStateManager.enableCull();
+            GlStateManager.enableBlend();
+            GlStateManager.popMatrix();
+        }
     }
 }
