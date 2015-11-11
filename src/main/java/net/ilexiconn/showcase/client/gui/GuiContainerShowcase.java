@@ -69,36 +69,38 @@ public class GuiContainerShowcase extends GuiContainer {
         listWidth = Math.min(listWidth, 150);
         modelList = new GuiModelList(this, listWidth);
 
-        selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
-        if (blockEntity.collapsedMenu) {
-            buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), 5, 10, 20, 20, ">");
-            modelList.forceTranslation(listWidth);
-        } else {
-            buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), listWidth + 5, 10, 20, 20, "<");
-            modelList.forceTranslation(0);
+        if (!Showcase.proxy.getTabulaModels().isEmpty()) {
+            selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
+            if (blockEntity.collapsedMenu) {
+                buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), 5, 10, 20, 20, ">");
+                modelList.forceTranslation(listWidth);
+            } else {
+                buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), listWidth + 5, 10, 20, 20, "<");
+                modelList.forceTranslation(0);
+            }
+            buttonList.add(buttonHide);
+
+            buttonList.add(buttonRotateLeft = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, "<"));
+            buttonList.add(buttonRotateRight = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, ">"));
+            buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
+            buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
+
+            buttonList.add(buttonMirror = new GuiButton(ButtonIds.MIRROR.ordinal(), 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
+
+            buttonList.add(buttonScalePlus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "^"));
+            buttonList.add(buttonScaleMinus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "v"));
+            buttonScalePlus.enabled = blockEntity.modelScale <= 31;
+            buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
+
+            buttonList.add(buttonBox = new GuiButton(ButtonIds.BOX.ordinal(), width - 25, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
+
+            buttonList.add(buttonOffsetLeft = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 75, height - 25, 20, 20, "<"));
+            buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
+            buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
+            buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
+            buttonList.add(buttonOffsetUp = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
+            buttonList.add(buttonOffsetDown = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
         }
-        buttonList.add(buttonHide);
-
-        buttonList.add(buttonRotateLeft = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, "<"));
-        buttonList.add(buttonRotateRight = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, ">"));
-        buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
-        buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
-
-        buttonList.add(buttonMirror = new GuiButton(ButtonIds.MIRROR.ordinal(), 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
-
-        buttonList.add(buttonScalePlus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "^"));
-        buttonList.add(buttonScaleMinus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "v"));
-        buttonScalePlus.enabled = blockEntity.modelScale <= 31;
-        buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
-
-        buttonList.add(buttonBox = new GuiButton(ButtonIds.BOX.ordinal(), width - 25, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
-
-        buttonList.add(buttonOffsetLeft = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 75, height - 25, 20, 20, "<"));
-        buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
-        buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
-        buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
-        buttonList.add(buttonOffsetUp = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
-        buttonList.add(buttonOffsetDown = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
     }
 
     public void actionPerformed(GuiButton button) throws IOException {

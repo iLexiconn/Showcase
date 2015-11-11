@@ -6,6 +6,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 
 import java.util.List;
@@ -27,6 +28,8 @@ public class ServerProxy {
         FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
         NetworkRegistry.INSTANCE.registerGuiHandler(Showcase.instance, new ServerGuiHandler());
+
+        FMLInterModComms.sendMessage("llibrary", "update-checker", "https://github.com/iLexiconn/Showcase/raw/version/versions.json");
     }
 
     public void init() {
