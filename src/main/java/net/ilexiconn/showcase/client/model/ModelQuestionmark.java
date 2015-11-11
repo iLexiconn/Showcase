@@ -5,7 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 
-public class ModelError extends ModelBase {
+public class ModelQuestionMark extends ModelBase {
     public ModelRenderer shape1;
     public ModelRenderer shape2;
     public ModelRenderer shape3;
@@ -17,7 +17,7 @@ public class ModelError extends ModelBase {
     public ModelRenderer shape4sub1;
     public ModelRenderer shape5sub1;
 
-    public ModelError() {
+    public ModelQuestionMark() {
         textureWidth = 32;
         textureHeight = 32;
         shape5sub1 = new ModelRenderer(this, 0, 0);

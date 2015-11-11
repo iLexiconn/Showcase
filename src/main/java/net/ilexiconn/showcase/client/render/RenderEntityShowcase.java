@@ -3,7 +3,7 @@ package net.ilexiconn.showcase.client.render;
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.client.AnimationHandler;
-import net.ilexiconn.showcase.client.model.ModelError;
+import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.renderer.GlStateManager;
@@ -15,7 +15,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class RenderEntityShowcase extends TileEntitySpecialRenderer {
-    public ModelError errorModel = new ModelError();
+    public ModelQuestionMark errorModel = new ModelQuestionMark();
     public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
 
     public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float f, int i) {

@@ -2,7 +2,7 @@ package net.ilexiconn.showcase.client.gui;
 
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.client.model.ModelError;
+import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageData;
@@ -32,7 +32,7 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiModelList modelList;
     public int listWidth;
 
-    public ModelError errorModel = new ModelError();
+    public ModelQuestionMark errorModel = new ModelQuestionMark();
     public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
     public AxisAlignedBB box = new AxisAlignedBB(-0.5f, 0.5f, -0.5f, 0.5f, 1.5f, 0.5f);
 
