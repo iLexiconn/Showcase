@@ -4,7 +4,6 @@
         "name": "Showcase",
         "description": "Showcase your Tabula models",
         "version": "${version}",
-        "mcversion": "1.8",
         "url": "https://ilexiconn.net/",
         "authorList": [
             "iLexiconn"
