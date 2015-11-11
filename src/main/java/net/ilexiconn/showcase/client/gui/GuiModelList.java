@@ -1,5 +1,8 @@
 package net.ilexiconn.showcase.client.gui;
 
+import cpw.mods.fml.client.GuiScrollingList;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.client.AnimationHandler;
@@ -8,11 +11,7 @@ import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraftforge.fml.client.GuiScrollingList;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -22,7 +21,7 @@ public class GuiModelList extends GuiScrollingList {
     private float translation = 0f;
 
     public GuiModelList(GuiContainerShowcase screen, int width) {
-        super(screen.mc, width, screen.height, 0, screen.height, 0, 35, screen.mc.displayWidth, screen.mc.displayHeight);
+        super(screen.mc, width, screen.height, 0, screen.height, 0, 35);
         parent = screen;
     }
 
@@ -65,25 +64,25 @@ public class GuiModelList extends GuiScrollingList {
         Minecraft mc = Minecraft.getMinecraft();
         TabulaModel container = Showcase.proxy.getTabulaModel(index);
         ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
-        FontRenderer fontRenderer = mc.fontRendererObj;
+        FontRenderer fontRenderer = mc.fontRenderer;
 
         if (ShowcaseConfig.showPreviews) {
             fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getModelName(), listWidth - 42), left + 36, slotTop + 2, 0xffffff);
             fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getAuthorName(), listWidth - 42), left + 36, slotTop + 12, 0xffffff);
             fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getCubeCount() + " cubes", listWidth - 42), left + 36, slotTop + 22, 0xffffff);
 
-            GlStateManager.pushMatrix();
-            GlStateManager.enableBlend();
+            GL11.glPushMatrix();
+            GL11.glEnable(GL11.GL_BLEND);
             startGlScissor((int) (2 + translation), slotTop, 32, 32);
-            GlStateManager.translate(20f, slotTop + 8f, 512f);
-            GlStateManager.scale(-10f, 10f, 10f);
-            GlStateManager.rotate(180f, 0f, 1f, 0f);
-            GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
-            GlStateManager.rotate(45f, 0f, 1f, 0f);
-            GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
+            GL11.glTranslated(20f, slotTop + 8f, 512f);
+            GL11.glScaled(-10f, 10f, 10f);
+            GL11.glRotated(180f, 0f, 1f, 0f);
+            GL11.glRotated(35.264f, 1.0f, 0.0f, 0.0f);
+            GL11.glRotated(45f, 0f, 1f, 0f);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, Showcase.proxy.getTextureId(container));
             model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
             endGlScissor();
-            GlStateManager.popMatrix();
+            GL11.glPopMatrix();
         } else {
             fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getModelName(), listWidth - 10), left + 4, slotTop + 2, 0xffffff);
             fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getAuthorName(), listWidth - 10), left + 4, slotTop + 12, 0xffffff);
@@ -107,9 +106,9 @@ public class GuiModelList extends GuiScrollingList {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         translation = AnimationHandler.smoothUpdate(translation, -translationTarget);
 
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(translation, 0f, 0f);
+        GL11.glPushMatrix();
+        GL11.glTranslated(translation, 0f, 0f);
         super.drawScreen(mouseX, mouseY, partialTicks);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 }

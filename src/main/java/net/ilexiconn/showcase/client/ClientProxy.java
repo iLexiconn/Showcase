@@ -2,6 +2,11 @@ package net.ilexiconn.showcase.client;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import cpw.mods.fml.client.registry.ClientRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.ProgressManager;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.json.JsonFactory;
@@ -12,14 +17,7 @@ import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.resources.model.ModelResourceLocation;
-import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
-import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -58,8 +56,6 @@ public class ClientProxy extends ServerProxy {
 
     public void postInit() {
         super.postInit();
-
-        mc.getRenderItem().getItemModelMesher().register(Item.getItemFromBlock(Showcase.blockShowcase), 0, new ModelResourceLocation("showcase:showcase", "inventory"));
     }
 
     public List<TabulaModel> getTabulaModels() {

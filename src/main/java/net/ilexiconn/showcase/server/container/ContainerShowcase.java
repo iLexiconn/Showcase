@@ -2,24 +2,35 @@ package net.ilexiconn.showcase.server.container;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 public class ContainerShowcase extends Container {
     private World world;
-    private BlockPos blockPos;
+    private int posX;
+    private int posY;
+    private int posZ;
 
-    public ContainerShowcase(World worldIn, BlockPos pos) {
+    public ContainerShowcase(World worldIn, int x, int y, int z) {
         world = worldIn;
-        blockPos = pos;
+        posX = x;
+        posY = y;
+        posZ = z;
     }
 
     public World getWorld() {
         return world;
     }
 
-    public BlockPos getBlockPos() {
-        return blockPos;
+    public int getPosX() {
+        return posX;
+    }
+
+    public int getPosY() {
+        return posY;
+    }
+
+    public int getPosZ() {
+        return posZ;
     }
 
     public boolean canInteractWith(EntityPlayer player) {

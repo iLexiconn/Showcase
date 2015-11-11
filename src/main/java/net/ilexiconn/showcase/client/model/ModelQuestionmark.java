@@ -2,8 +2,8 @@ package net.ilexiconn.showcase.client.model;
 
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
+import org.lwjgl.opengl.GL11;
 
 public class ModelQuestionMark extends ModelBase {
     public ModelRenderer shape1;
@@ -62,13 +62,13 @@ public class ModelQuestionMark extends ModelBase {
     }
 
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(shape1.offsetX, shape1.offsetY, shape1.offsetZ);
-        GlStateManager.translate(shape1.rotationPointX * f5, shape1.rotationPointY * f5, shape1.rotationPointZ * f5);
-        GlStateManager.scale(1.25d, 1.25d, 1.25d);
-        GlStateManager.translate(-shape1.offsetX, -shape1.offsetY, -shape1.offsetZ);
-        GlStateManager.translate(-shape1.rotationPointX * f5, -shape1.rotationPointY * f5, -shape1.rotationPointZ * f5);
+        GL11.glPushMatrix();
+        GL11.glTranslated(shape1.offsetX, shape1.offsetY, shape1.offsetZ);
+        GL11.glTranslated(shape1.rotationPointX * f5, shape1.rotationPointY * f5, shape1.rotationPointZ * f5);
+        GL11.glScaled(1.25d, 1.25d, 1.25d);
+        GL11.glTranslated(-shape1.offsetX, -shape1.offsetY, -shape1.offsetZ);
+        GL11.glTranslated(-shape1.rotationPointX * f5, -shape1.rotationPointY * f5, -shape1.rotationPointZ * f5);
         shape1.render(f5);
-        GlStateManager.popMatrix();
+        GL11.glPopMatrix();
     }
 }

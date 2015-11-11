@@ -1,13 +1,13 @@
 package net.ilexiconn.showcase.server.block.entity;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class BlockEntityShowcase extends TileEntity {
     public String modelName = "";
@@ -69,10 +69,10 @@ public class BlockEntityShowcase extends TileEntity {
     public Packet getDescriptionPacket() {
         NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
-        return new S35PacketUpdateTileEntity(pos, 0, compound);
+        return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, compound);
     }
 
     public void onDataPacket(NetworkManager networkManager, S35PacketUpdateTileEntity packet) {
-        readFromNBT(packet.getNbtCompound());
+        readFromNBT(packet.func_148857_g());
     }
 }

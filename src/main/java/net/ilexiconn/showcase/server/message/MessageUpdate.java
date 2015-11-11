@@ -1,13 +1,14 @@
 package net.ilexiconn.showcase.server.message;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.BlockPos;
-import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageUpdate extends AbstractMessage<MessageUpdate> {
-    public BlockPos blockPos;
+    public int posX;
+    public int posY;
+    public int posZ;
     public Object object;
     public MessageData messageData;
 
@@ -15,8 +16,10 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     }
 
-    public MessageUpdate(BlockPos pos, Object value, MessageData data) {
-        blockPos = pos;
+    public MessageUpdate(int x, int y, int z, Object value, MessageData data) {
+        posX = x;
+        posY = y;
+        posZ = z;
         object = value;
         messageData = data;
     }
@@ -27,14 +30,16 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
         try {
-            message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
+            message.messageData.getField().set(player.worldObj.getTileEntity(message.posX, message.posY, message.posZ), message.object);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
     public void fromBytes(ByteBuf buf) {
-        blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
+        posX = buf.readInt();
+        posY = buf.readInt();
+        posZ = buf.readInt();
         messageData = MessageData.valueOf(ByteBufUtils.readUTF8String(buf));
         if (messageData.getType() == String.class) {
             object = ByteBufUtils.readUTF8String(buf);
@@ -46,9 +51,9 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
     }
 
     public void toBytes(ByteBuf buf) {
-        buf.writeInt(blockPos.getX());
-        buf.writeInt(blockPos.getY());
-        buf.writeInt(blockPos.getZ());
+        buf.writeInt(posX);
+        buf.writeInt(posY);
+        buf.writeInt(posZ);
         ByteBufUtils.writeUTF8String(buf, messageData.name());
         if (messageData.getType() == String.class) {
             ByteBufUtils.writeUTF8String(buf, (String) object);
