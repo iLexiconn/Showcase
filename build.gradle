@@ -75,6 +75,7 @@ processResources {
 }
 
 task sourceJar(type: Jar, dependsOn: classes) {
+    classifier = "sources"
     from sourceSets.main.allSource
 }
 
