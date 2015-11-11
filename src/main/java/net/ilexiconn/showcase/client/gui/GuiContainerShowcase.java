@@ -324,4 +324,17 @@ public class GuiContainerShowcase extends GuiContainer {
     public void endGlScissor() {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
+
+    public void updateScreen() {
+        if (mc.theWorld.getBlock(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ()) != Showcase.blockShowcase) {
+            mc.displayGuiScreen(null);
+            onGuiClosed();
+        }
+        int currentIndex = Showcase.proxy.getModelIndex(blockEntity.modelName);
+        if (currentIndex != selectedIndex) {
+            blockEntity.modelName = Showcase.proxy.getModelName(currentIndex);
+            selectedIndex = currentIndex;
+            selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
+        }
+    }
 }
