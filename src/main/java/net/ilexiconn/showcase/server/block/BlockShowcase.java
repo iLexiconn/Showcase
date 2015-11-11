@@ -15,6 +15,7 @@ public class BlockShowcase extends BlockContainer {
     public BlockShowcase() {
         super(Material.rock);
         setBlockName("showcase");
+        setBlockTextureName("showcase:missing_texture");
         setCreativeTab(CreativeTabs.tabDecorations);
         setHardness(-1f);
         setResistance(-1f);

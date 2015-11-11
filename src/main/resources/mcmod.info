@@ -10,8 +10,12 @@
             "iLexiconn"
         ],
         "credits": "",
+        "requiredMods": [
+             "Forge@[10.13.4.1541,)",
+             "llibrary@[0.5.2,)"
+        ],
         "dependencies": [
-            "llibrary@[0.5.0-1.8,)"
+             "llibrary@[0.5.2,)"
         ],
         "useDependencyInformation": true
     }

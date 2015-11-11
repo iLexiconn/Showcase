@@ -8,15 +8,19 @@ import cpw.mods.fml.common.ProgressManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
+import net.ilexiconn.llibrary.client.render.RenderHelper;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.json.JsonFactory;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.client.model.ModelCube;
 import net.ilexiconn.showcase.client.render.RenderEntityShowcase;
 import net.ilexiconn.showcase.server.ServerProxy;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.item.Item;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.imageio.ImageIO;
@@ -46,6 +50,7 @@ public class ClientProxy extends ServerProxy {
         FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
         ClientRegistry.bindTileEntitySpecialRenderer(BlockEntityShowcase.class, new RenderEntityShowcase());
+        RenderHelper.registerItem3dRenderer(Item.getItemFromBlock(Showcase.blockShowcase), new ModelCube(), new ResourceLocation("showcase", "textures/blocks/missing_texture.png"));
     }
 
     public void init() {
