@@ -3,6 +3,7 @@ package net.ilexiconn.showcase.server.message;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
+import net.ilexiconn.showcase.Showcase;
 import net.minecraft.entity.player.EntityPlayer;
 
 public class MessageUpdate extends AbstractMessage<MessageUpdate> {
@@ -24,13 +25,26 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
         messageData = data;
     }
 
-    public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
+    public MessageUpdate(MessageUpdate message) {
+        posX = message.posX;
+        posY = message.posY;
+        posZ = message.posZ;
+        object = message.object;
+        messageData = message.messageData;
+    }
 
+    public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
+        try {
+            message.messageData.getField().set(player.worldObj.getTileEntity(message.posX, message.posY, message.posZ), message.object);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
         try {
             message.messageData.getField().set(player.worldObj.getTileEntity(message.posX, message.posY, message.posZ), message.object);
+            Showcase.networkWrapper.sendToAll(new MessageUpdate(message));
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }

@@ -37,6 +37,7 @@ public class Showcase {
 
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
         AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 0, Side.SERVER);
+        AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 1, Side.CLIENT);
 
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");
