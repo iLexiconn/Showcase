@@ -47,12 +47,12 @@ public class ClientProxy extends ServerProxy {
         ClientEventHandler eventHandler = new ClientEventHandler();
         FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
-        ClientRegistry.bindTileEntitySpecialRenderer(BlockEntityShowcase.class, new RenderEntityShowcase());
     }
 
     public void init() {
         super.init();
 
+        ClientRegistry.bindTileEntitySpecialRenderer(BlockEntityShowcase.class, new RenderEntityShowcase());
         modelList = loadModelsFromDir(new File("." + File.separator + "mods" + File.separator + "tabula" + File.separator + "saves"));
     }
 
