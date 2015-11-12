@@ -157,8 +157,8 @@ public class GuiContainerShowcase extends GuiContainer {
                 } else {
                     blockEntity.modelScale += 1;
                 }
-                if (blockEntity.modelScale > 64) {
-                    blockEntity.modelScale = 64;
+                if (blockEntity.modelScale > 128) {
+                    blockEntity.modelScale = 128;
                 }
             } else {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -170,7 +170,7 @@ public class GuiContainerShowcase extends GuiContainer {
                     blockEntity.modelScale = 1;
                 }
             }
-            buttonScalePlus.enabled = blockEntity.modelScale <= 63;
+            buttonScalePlus.enabled = blockEntity.modelScale <= 127;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 2;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelScale, MessageData.SCALE));
         } else if (button.id == ButtonIds.BOX.ordinal()) {
