@@ -30,7 +30,7 @@ public class BlockShowcase extends BlockContainer {
     }
 
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (!player.isSneaking()) {
+        if (!player.isSneaking() && player.capabilities.isCreativeMode) {
             player.openGui(Showcase.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
             return true;
         } else {
