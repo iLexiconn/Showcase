@@ -161,8 +161,8 @@ public class GuiContainerShowcase extends GuiContainer {
                 } else {
                     blockEntity.modelScale += 1;
                 }
-                if (blockEntity.modelScale > 64) {
-                    blockEntity.modelScale = 64;
+                if (blockEntity.modelScale > 128) {
+                    blockEntity.modelScale = 128;
                 }
             } else {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -174,7 +174,7 @@ public class GuiContainerShowcase extends GuiContainer {
                     blockEntity.modelScale = 1;
                 }
             }
-            buttonScalePlus.enabled = blockEntity.modelScale <= 63;
+            buttonScalePlus.enabled = blockEntity.modelScale <= 127;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 2;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
         } else if (button.id == ButtonIds.BOX.ordinal()) {
@@ -312,6 +312,7 @@ public class GuiContainerShowcase extends GuiContainer {
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 28, height - 35, 0xffffff);
             buttonRotateLeft.xPosition = menuSize + 5;
             buttonRotateRight.xPosition = menuSize + 30;
+            buttonResetRotation.xPosition = menuSize + 55;
 
             int positionMirror = menuSize - 10 + (width - menuSize) / 2;
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, 5, 0xffffff);
@@ -321,6 +322,7 @@ public class GuiContainerShowcase extends GuiContainer {
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 10, height - 35, 0xffffff);
             buttonScalePlus.xPosition = positionScale - 12;
             buttonScaleMinus.xPosition = positionScale + 13;
+            buttonResetScale.xPosition = positionScale - 28;
 
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.box"), width - 15, 5, 0xffffff);
 
