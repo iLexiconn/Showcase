@@ -19,7 +19,7 @@ import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.minecraft.block.Block;
 
-@Mod(modid = "showcase", name = "Showcase", version = "0.1.0")
+@Mod(modid = "showcase", name = "Showcase", version = "0.1.0", dependencies = "required-after:Forge@[10.13.4.1541,);required-after:llibrary@[0.5.2,)")
 public class Showcase {
     @SidedProxy(serverSide = "net.ilexiconn.showcase.server.ServerProxy", clientSide = "net.ilexiconn.showcase.client.ClientProxy")
     public static ServerProxy proxy;
