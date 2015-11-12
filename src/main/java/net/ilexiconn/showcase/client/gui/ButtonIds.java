@@ -6,5 +6,6 @@ public enum ButtonIds {
     MIRROR,
     SCALE,
     BOX,
-    OFFSET
+    OFFSET,
+    RESET
 }

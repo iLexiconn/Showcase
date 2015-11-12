@@ -17,6 +17,9 @@ import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.client.config.GuiButtonExt;
+import net.minecraftforge.fml.client.config.GuiUnicodeGlyphButton;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -51,8 +54,12 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonOffsetRight;
     public GuiButton buttonOffsetForward;
     public GuiButton buttonOffsetBackward;
-    public GuiButton buttonOffsetUp;
-    public GuiButton buttonOffsetDown;
+    public GuiButtonExt buttonOffsetUp;
+    public GuiButtonExt buttonOffsetDown;
+
+    public GuiUnicodeGlyphButton buttonResetRotation;
+    public GuiUnicodeGlyphButton buttonResetScale;
+    public GuiUnicodeGlyphButton buttonResetOffset;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
@@ -98,8 +105,13 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
             buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
             buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
-            buttonList.add(buttonOffsetUp = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
-            buttonList.add(buttonOffsetDown = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
+            buttonList.add(buttonOffsetUp = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
+            buttonList.add(buttonOffsetDown = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
+
+            buttonList.add(buttonResetRotation = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetScale = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetOffset = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), width - 91, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+
         }
     }
 
@@ -212,6 +224,25 @@ public class GuiContainerShowcase extends GuiContainer {
                     blockEntity.modelOffsetY += 1;
                 }
                 Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+            }
+        } else if (button.id == ButtonIds.RESET.ordinal()) {
+            if (button == buttonResetRotation) {
+                blockEntity.modelRotation = 0;
+                buttonRotateLeft.enabled = true;
+                buttonRotateRight.enabled = false;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
+            } else if (button == buttonResetScale) {
+                blockEntity.modelScale = 16;
+                buttonScalePlus.enabled = true;
+                buttonScaleMinus.enabled = true;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
+            } else {
+                blockEntity.modelOffsetX = 0;
+                blockEntity.modelOffsetY = 0;
+                blockEntity.modelOffsetZ = 0;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
             }
         }
     }
