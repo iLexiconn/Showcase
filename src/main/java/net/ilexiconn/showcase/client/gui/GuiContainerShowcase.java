@@ -1,5 +1,8 @@
 package net.ilexiconn.showcase.client.gui;
 
+import cpw.mods.fml.client.config.GuiButtonExt;
+import cpw.mods.fml.client.config.GuiUnicodeGlyphButton;
+import cpw.mods.fml.client.config.GuiUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
@@ -48,8 +51,12 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiButton buttonOffsetRight;
     public GuiButton buttonOffsetForward;
     public GuiButton buttonOffsetBackward;
-    public GuiButton buttonOffsetUp;
-    public GuiButton buttonOffsetDown;
+    public GuiButtonExt buttonOffsetUp;
+    public GuiButtonExt buttonOffsetDown;
+
+    public GuiUnicodeGlyphButton buttonResetRotation;
+    public GuiUnicodeGlyphButton buttonResetScale;
+    public GuiUnicodeGlyphButton buttonResetOffset;
 
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
@@ -95,8 +102,12 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
             buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
             buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
-            buttonList.add(buttonOffsetUp = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
-            buttonList.add(buttonOffsetDown = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
+            buttonList.add(buttonOffsetUp = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
+            buttonList.add(buttonOffsetDown = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
+
+            buttonList.add(buttonResetRotation = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetScale = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetOffset = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), width - 91, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
         }
     }
 
@@ -210,6 +221,25 @@ public class GuiContainerShowcase extends GuiContainer {
                 }
                 Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
             }
+        } else if (button.id == ButtonIds.RESET.ordinal()) {
+            if (button == buttonResetRotation) {
+                blockEntity.modelRotation = 0;
+                buttonRotateLeft.enabled = true;
+                buttonRotateRight.enabled = false;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelRotation, MessageData.ROTATION));
+            } else if (button == buttonResetScale) {
+                blockEntity.modelScale = 16;
+                buttonScalePlus.enabled = true;
+                buttonScaleMinus.enabled = true;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelScale, MessageData.SCALE));
+            } else {
+                blockEntity.modelOffsetX = 0;
+                blockEntity.modelOffsetY = 0;
+                blockEntity.modelOffsetZ = 0;
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+            }
         }
     }
 
@@ -278,6 +308,7 @@ public class GuiContainerShowcase extends GuiContainer {
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.rotate"), menuSize + 28, height - 35, 0xffffff);
             buttonRotateLeft.xPosition = menuSize + 5;
             buttonRotateRight.xPosition = menuSize + 30;
+            buttonResetRotation.xPosition = menuSize + 55;
 
             int positionMirror = menuSize - 10 + (width - menuSize) / 2;
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, 5, 0xffffff);
@@ -287,6 +318,7 @@ public class GuiContainerShowcase extends GuiContainer {
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 10, height - 35, 0xffffff);
             buttonScalePlus.xPosition = positionScale - 12;
             buttonScaleMinus.xPosition = positionScale + 13;
+            buttonResetScale.xPosition = positionScale - 28;
 
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.box"), width - 15, 5, 0xffffff);
 
