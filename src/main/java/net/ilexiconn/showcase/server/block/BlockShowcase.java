@@ -2,7 +2,6 @@ package net.ilexiconn.showcase.server.block;
 
 import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.creativetab.CreativeTabs;
@@ -27,12 +26,6 @@ public class BlockShowcase extends BlockContainer {
             return true;
         } else {
             return false;
-        }
-    }
-
-    public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-        if (!world.isRemote) {
-            world.setBlockMetadataWithNotify(x, y, z, world.getBlockPowerInput(x, y, z) > 0 ? 1 : 0, 2);
         }
     }
 
