@@ -36,7 +36,7 @@ if (secretFile.exists()) {
     }
 }
 
-version = config.mod_version + "-" + config.minecraft_version
+version = getVersionFromJava()
 group = config.mod_group
 archivesBaseName = config.mod_name
 sourceCompatibility = targetCompatibility = 1.6
@@ -60,7 +60,7 @@ dependencies {
 }
 
 processResources {
-    inputs.property "version", project.version
+    inputs.property "version", getVersionFromJava()
     inputs.property "mcversion", project.minecraft.version
 
     from(sourceSets.main.resources.srcDirs) {
@@ -110,11 +110,37 @@ curseforge {
         addGameVersion config.minecraft_version
 
         mainArtifact(jar) {
-            displayName = "Showcase " + config.mod_version + " for Minecraft " + config.minecraft_version
+            displayName = "Showcase " + getVersionFromJavaWithoutMc() + " for Minecraft " + config.minecraft_version
         }
 
         addArtifact(sourceJar) {
             displayName = "Sources"
         }
     }
+}
+
+
+String getVersionFromJava() {
+    return getVersionFromJavaWithoutMc() + "-1.7.10";
+}
+
+String getVersionFromJavaWithoutMc() {
+    String major = "0";
+    String revision = "0";
+    String patch = "0";
+    String prefix = "public static final String VERSION = \"";
+    File file = file("src/main/java/net/ilexiconn/showcase/Showcase.java")
+    file.eachLine { String s ->
+        s = s.trim();
+        if (s.startsWith(prefix)) {
+            s = s.substring(prefix.length(), s.length() - 2);
+            String[] pts = s.split("\\.");
+
+            major = pts[0];
+            revision = pts[1];
+            patch = pts[2];
+        }
+    }
+
+    return "$major.$revision.$patch";
 }
