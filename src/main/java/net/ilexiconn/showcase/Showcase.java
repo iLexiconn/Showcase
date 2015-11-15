@@ -19,15 +19,16 @@ import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.Side;
 
-@Mod(modid = "showcase", name = "Showcase", version = "0.1.0", dependencies = "required-after:Forge@[11.14.3.1551,);required-after:llibrary@[0.5.2,)")
+@Mod(modid = "showcase", name = "Showcase", version = Showcase.VERSION, dependencies = "required-after:Forge@[11.14.4.1563,99999.14.0.0);required-after:llibrary@[0.5.3,)")
 public class Showcase {
     @SidedProxy(serverSide = "net.ilexiconn.showcase.server.ServerProxy", clientSide = "net.ilexiconn.showcase.client.ClientProxy")
     public static ServerProxy proxy;
     @Mod.Instance("showcase")
     public static Showcase instance;
-
     public static LoggerHelper logger = new LoggerHelper("Showcase");
     public static SimpleNetworkWrapper networkWrapper;
+
+    public static final String VERSION = "0.1.0";
 
     public static Block blockShowcase;
 

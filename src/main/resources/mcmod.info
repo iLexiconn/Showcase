@@ -9,13 +9,9 @@
             "iLexiconn"
         ],
         "credits": "",
-        "requiredMods": [
-             "Forge@[11.14.3.1551,)",
-             "llibrary@[0.5.2,)"
-        ],
         "dependencies": [
-             "llibrary@[0.5.2,)"
-        ],
-        "useDependencyInformation": true
+            "Forge",
+            "llibrary"
+        ]
     }
 ]
