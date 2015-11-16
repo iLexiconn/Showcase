@@ -11,7 +11,7 @@
         "credits": "",
         "dependencies": [
             "Forge",
-            "llibrary"
+            "llibrary@[0.5.4]"
         ]
     }
 ]
