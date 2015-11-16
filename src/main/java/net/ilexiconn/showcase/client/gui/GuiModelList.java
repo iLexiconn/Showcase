@@ -22,7 +22,7 @@ public class GuiModelList extends GuiScrollingList {
     private float translation = 0f;
 
     public GuiModelList(GuiContainerShowcase screen, int width) {
-        super(screen.mc, width, screen.height, 0, screen.height, 0, 35, screen.mc.displayWidth, screen.mc.displayHeight);
+        super(screen.mc, width, screen.height, 0, screen.height, 0, 35);
         parent = screen;
     }
 
