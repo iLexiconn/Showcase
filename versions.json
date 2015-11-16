@@ -1,10 +1,17 @@
 {
-  "release": "0.1.0",
+  "release": "0.1.1",
   "versions": {
     "0.1.0": [
       "Initial release"
+    ],
+    "0.1.1": [
+      "Added reset button",
+      "Fixed crash for outdated forge version",
+      "Fixed redstone resetting model"
     ]
   },
-  "updateUrl": "http://bit.ly/showcasemod",
-  "iconUrl": "http://i.imgur.com/7aajScG.png"
+  "updateUrl": "http://www.planetminecraft.com/mod/showcase-3354583/",
+  "directUpdateUrl-1.8": "http://minecraft.curseforge.com/projects/showcase/files/2266860/download",
+  "directUpdateUrl-1.7.10": "http://minecraft.curseforge.com/projects/showcase/files/2266857/download",
+  "iconUrl": "http://i.imgur.com/ARbugqr.png"
 }
