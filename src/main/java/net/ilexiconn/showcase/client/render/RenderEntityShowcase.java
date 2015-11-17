@@ -2,12 +2,13 @@ package net.ilexiconn.showcase.client.render;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.api.IModel;
+import net.ilexiconn.showcase.api.IModelParser;
+import net.ilexiconn.showcase.api.ShowcaseRegistry;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
-import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -23,7 +24,7 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
     public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
     public AxisAlignedBB box = AxisAlignedBB.getBoundingBox(0f, 0f, 0f, 1f, 1f, 1f);
 
-    public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float f) {
+    public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float partialTicks) {
         BlockEntityShowcase showcase = (BlockEntityShowcase) tileEntity;
         showcase.modelRotationCurrent = AnimationHandler.smoothUpdate(showcase.modelRotationCurrent, showcase.modelRotation);
         showcase.modelScaleCurrent = AnimationHandler.smoothUpdate(showcase.modelScaleCurrent, showcase.modelScale);
@@ -31,8 +32,10 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         showcase.modelOffsetXCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetXCurrent, showcase.modelOffsetX);
         showcase.modelOffsetYCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetYCurrent, showcase.modelOffsetY);
         showcase.modelOffsetZCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetZCurrent, showcase.modelOffsetZ);
-        TabulaModel container = Showcase.proxy.getTabulaModel(Showcase.proxy.getModelIndex(showcase.modelName));
-        ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
+
+        IModel model = ShowcaseRegistry.getModel(""); //todo
+        IModelParser parser = ShowcaseRegistry.getModelParserFor(model);
+
         GL11.glPushMatrix();
         GL11.glColor4f(1f, 1f, 1f, 1f);
         GL11.glEnable(GL11.GL_BLEND);
@@ -43,13 +46,13 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         GL11.glScaled(showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16);
         GL11.glRotated(showcase.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
         if (model != null) {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, Showcase.proxy.getTextureId(container));
-            model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, parser.getTextureId(model));
+            parser.render(model);
             if (showcase.modelMirrored) {
                 GL11.glScaled(-1f, -1f, -1f);
                 GL11.glRotated(180f, 0f, 0f, 1f);
                 GL11.glRotated(180f, 0f, 1f, 0f);
-                model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                parser.render(model);
             }
         } else {
             bindTexture(errorTexture);

@@ -79,8 +79,15 @@ task sourceJar(type: Jar, dependsOn: classes) {
     from sourceSets.main.allSource
 }
 
+task apiJar(type: Jar) {
+    from (sourceSets.main.allSource) {
+        include "net/ilexiconn/showcase/api/**"
+    }
+    classifier = "api"
+}
+
 artifacts {
-    archives sourceJar
+    archives sourceJar, apiJar
 }
 
 import groovy.json.JsonSlurper
@@ -116,9 +123,12 @@ curseforge {
         addArtifact(sourceJar) {
             displayName = "Sources"
         }
+
+        addArtifact(apiJar) {
+            displayName = "API"
+        }
     }
 }
-
 
 String getVersionFromJava() {
     return getVersionFromJavaWithoutMc() + "-1.7.10";
