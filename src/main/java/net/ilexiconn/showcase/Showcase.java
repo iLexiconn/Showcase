@@ -3,15 +3,22 @@ package net.ilexiconn.showcase;
 import net.ilexiconn.llibrary.common.config.ConfigHelper;
 import net.ilexiconn.llibrary.common.log.LoggerHelper;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
+import net.ilexiconn.showcase.api.ShowcaseRegistry;
+import net.ilexiconn.showcase.server.ServerEventHandler;
+import net.ilexiconn.showcase.server.ServerGuiHandler;
 import net.ilexiconn.showcase.server.ServerProxy;
 import net.ilexiconn.showcase.server.block.BlockShowcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
 import net.ilexiconn.showcase.server.message.*;
+import net.ilexiconn.showcase.server.tabula.TabulaModelParser;
 import net.minecraft.block.Block;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLInterModComms;
 import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
@@ -28,7 +35,7 @@ public class Showcase {
     public static LoggerHelper logger = new LoggerHelper("Showcase");
     public static SimpleNetworkWrapper networkWrapper;
 
-    public static final String VERSION = "0.1.1";
+    public static final String VERSION = "0.2.0-develop";
 
     public static Block blockShowcase;
 
@@ -43,6 +50,15 @@ public class Showcase {
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");
         GameRegistry.registerTileEntity(BlockEntityShowcase.class, "showcaseEntity");
+
+        ServerEventHandler eventHandler = new ServerEventHandler();
+        FMLCommonHandler.instance().bus().register(eventHandler);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
+        NetworkRegistry.INSTANCE.registerGuiHandler(Showcase.instance, new ServerGuiHandler());
+
+        FMLInterModComms.sendMessage("llibrary", "update-checker", "https://github.com/iLexiconn/Showcase/raw/version/versions.json");
+
+        ShowcaseRegistry.registerModelParser("tabula", new TabulaModelParser());
 
         proxy.preInit();
     }

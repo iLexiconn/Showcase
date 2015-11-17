@@ -1,11 +1,12 @@
 package net.ilexiconn.showcase.client.render;
 
-import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.api.IModel;
+import net.ilexiconn.showcase.api.IModelParser;
+import net.ilexiconn.showcase.api.ShowcaseRegistry;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
-import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -33,8 +34,10 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         showcase.modelOffsetXCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetXCurrent, showcase.modelOffsetX);
         showcase.modelOffsetYCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetYCurrent, showcase.modelOffsetY);
         showcase.modelOffsetZCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetZCurrent, showcase.modelOffsetZ);
-        TabulaModel container = Showcase.proxy.getTabulaModel(Showcase.proxy.getModelIndex(showcase.modelName));
-        ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
+
+        IModel model = ShowcaseRegistry.getModel(""); //todo
+        IModelParser parser = ShowcaseRegistry.getModelParserFor(model);
+
         GlStateManager.pushMatrix();
         GlStateManager.color(1f, 1f, 1f, 1f);
         GlStateManager.enableBlend();
@@ -45,13 +48,13 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         GlStateManager.scale(showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16);
         GlStateManager.rotate(showcase.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
         if (model != null) {
-            GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
-            model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+            GlStateManager.bindTexture(parser.getTextureId(model));
+            parser.render(model);
             if (showcase.modelMirrored) {
                 GlStateManager.scale(-1f, -1f, -1f);
                 GlStateManager.rotate(180f, 0f, 0f, 1f);
                 GlStateManager.rotate(180f, 0f, 1f, 0f);
-                model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                parser.render(model);
             }
         } else {
             bindTexture(errorTexture);

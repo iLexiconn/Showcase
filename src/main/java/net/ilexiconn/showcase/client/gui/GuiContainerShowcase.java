@@ -1,13 +1,14 @@
 package net.ilexiconn.showcase.client.gui;
 
-import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.api.IModel;
+import net.ilexiconn.showcase.api.IModelParser;
+import net.ilexiconn.showcase.api.ShowcaseRegistry;
 import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageData;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
-import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.ScaledResolution;
@@ -40,7 +41,7 @@ public class GuiContainerShowcase extends GuiContainer {
     public AxisAlignedBB box = new AxisAlignedBB(-0.5f, 0.5f, -0.5f, 0.5f, 1.5f, 0.5f);
 
     public int selectedIndex = 0;
-    public TabulaModel selectedModel;
+    public IModel selectedModel;
 
     public GuiButton buttonHide;
     public GuiButton buttonRotateLeft;
@@ -69,15 +70,15 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public void initGui() {
         super.initGui();
-        for (TabulaModel model : Showcase.proxy.getTabulaModels()) {
-            listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getModelName()));
-            listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getAuthorName()));
+        for (IModel model : ShowcaseRegistry.getModelList()) {
+            listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getName()));
+            listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getAuthor()));
         }
         listWidth = Math.min(listWidth, 150);
         modelList = new GuiModelList(this, listWidth);
 
-        if (!Showcase.proxy.getTabulaModels().isEmpty()) {
-            selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName));
+        if (!ShowcaseRegistry.getModelList().isEmpty()) {
+            //selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName)); todo
             if (blockEntity.collapsedMenu) {
                 buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), 5, 10, 20, 20, ">");
                 modelList.forceTranslation(listWidth);
@@ -248,7 +249,7 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        if (Showcase.proxy.getTabulaModels().isEmpty()) {
+        if (ShowcaseRegistry.getModelList().isEmpty()) {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
@@ -266,14 +267,14 @@ public class GuiContainerShowcase extends GuiContainer {
             GlStateManager.scale(blockEntity.modelScaleCurrent / 16, blockEntity.modelScaleCurrent / 16, blockEntity.modelScaleCurrent / 16);
             GlStateManager.rotate(blockEntity.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
             if (selectedModel != null) {
-                ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(selectedModel);
-                GlStateManager.bindTexture(Showcase.proxy.getTextureId(selectedModel));
-                model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                IModelParser parser = ShowcaseRegistry.getModelParserFor(selectedModel);
+                GlStateManager.bindTexture(parser.getTextureId(selectedModel));
+                parser.render(selectedModel);
                 if (blockEntity.modelMirrored) {
                     GlStateManager.scale(-1f, -1f, -1f);
                     GlStateManager.rotate(180f, 0f, 0f, 1f);
                     GlStateManager.rotate(180f, 0f, 1f, 0f);
-                    model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+                    parser.render(selectedModel);
                 }
             } else {
                 mc.getTextureManager().bindTexture(errorTexture);
@@ -338,9 +339,9 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void selectIndex(int index) {
-        blockEntity.modelName = Showcase.proxy.getModelName(index);
+        //blockEntity.modelName = Showcase.proxy.getModelName(index); todo
         selectedIndex = index;
-        selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
+        //selectedModel = Showcase.proxy.getTabulaModel(selectedIndex); todo
         Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelName, MessageData.NAME));
     }
 
@@ -366,11 +367,11 @@ public class GuiContainerShowcase extends GuiContainer {
             mc.displayGuiScreen(null);
             onGuiClosed();
         }
-        int currentIndex = Showcase.proxy.getModelIndex(blockEntity.modelName);
+        /*int currentIndex = Showcase.proxy.getModelIndex(blockEntity.modelName); todo
         if (currentIndex != selectedIndex) {
             blockEntity.modelName = Showcase.proxy.getModelName(currentIndex);
             selectedIndex = currentIndex;
             selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
-        }
+        }*/
     }
 }

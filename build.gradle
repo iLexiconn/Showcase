@@ -59,6 +59,17 @@ processResources {
     }
 }
 
+task apiJar(type: Jar) {
+    from (sourceSets.main.allSource) {
+        include "net/ilexiconn/showcase/api/**"
+    }
+    classifier = "api"
+}
+
+artifacts {
+    archives sourceJar, apiJar
+}
+
 import groovy.json.JsonSlurper
 curseforge {
     def url = "https://github.com/iLexiconn/Showcase/raw/version/versions.json".toURL()
@@ -91,6 +102,10 @@ curseforge {
 
         addArtifact(sourceJar) {
             displayName = "Sources"
+        }
+
+        addArtifact(apiJar) {
+            displayName = "API"
         }
     }
 }

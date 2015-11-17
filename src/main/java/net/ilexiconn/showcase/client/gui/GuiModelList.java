@@ -1,10 +1,10 @@
 package net.ilexiconn.showcase.client.gui;
 
-import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
-import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.api.IModel;
+import net.ilexiconn.showcase.api.IModelParser;
+import net.ilexiconn.showcase.api.ShowcaseRegistry;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
-import net.ilexiconn.showcase.server.tabula.TabulaModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -40,7 +40,7 @@ public class GuiModelList extends GuiScrollingList {
     }
 
     public int getSize() {
-        return Showcase.proxy.getTabulaModels().size();
+        return ShowcaseRegistry.getModelCount();
     }
 
     public void elementClicked(int index, boolean doubleClick) {
@@ -63,14 +63,15 @@ public class GuiModelList extends GuiScrollingList {
 
     public void drawSlot(int index, int entryRight, int slotTop, int slotBuffer, Tessellator tessellator) {
         Minecraft mc = Minecraft.getMinecraft();
-        TabulaModel container = Showcase.proxy.getTabulaModel(index);
-        ModelJson model = (ModelJson) Showcase.proxy.getJsonModel(container);
         FontRenderer fontRenderer = mc.fontRendererObj;
 
+        IModel model = ShowcaseRegistry.getModel(""); //todo
+        IModelParser parser = ShowcaseRegistry.getModelParserFor(model);
+
         if (ShowcaseConfig.showPreviews) {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getModelName(), listWidth - 42), left + 36, slotTop + 2, 0xffffff);
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getAuthorName(), listWidth - 42), left + 36, slotTop + 12, 0xffffff);
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getCubeCount() + " cubes", listWidth - 42), left + 36, slotTop + 22, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getName(), listWidth - 42), left + 36, slotTop + 2, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getAuthor(), listWidth - 42), left + 36, slotTop + 12, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getCubeCount() + " cubes", listWidth - 42), left + 36, slotTop + 22, 0xffffff);
 
             GlStateManager.pushMatrix();
             GlStateManager.enableBlend();
@@ -80,14 +81,14 @@ public class GuiModelList extends GuiScrollingList {
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
             GlStateManager.rotate(45f, 0f, 1f, 0f);
-            GlStateManager.bindTexture(Showcase.proxy.getTextureId(container));
-            model.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
+            GlStateManager.bindTexture(parser.getTextureId(model));
+            parser.render(model);
             endGlScissor();
             GlStateManager.popMatrix();
         } else {
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getModelName(), listWidth - 10), left + 4, slotTop + 2, 0xffffff);
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getAuthorName(), listWidth - 10), left + 4, slotTop + 12, 0xffffff);
-            fontRenderer.drawString(fontRenderer.trimStringToWidth(container.getCubeCount() + " cubes", listWidth - 10), left + 4, slotTop + 22, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getName(), listWidth - 10), left + 4, slotTop + 2, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getAuthor(), listWidth - 10), left + 4, slotTop + 12, 0xffffff);
+            fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getCubeCount() + " cubes", listWidth - 10), left + 4, slotTop + 22, 0xffffff);
         }
     }
 
