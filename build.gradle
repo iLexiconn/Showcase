@@ -40,8 +40,13 @@ repositories {
     }
 }
 
+configurations {
+    include
+}
+
 dependencies {
     compile "net.ilexiconn:llibrary:${config.llibrary_version}-${config.minecraft_version}:dev"
+    include "net.ilexiconn:llibrary-wrapper:${config.minecraft_version}"
 }
 
 processResources {
@@ -56,6 +61,13 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
+    }
+}
+
+jar {
+    from configurations.include.collect { it.isDirectory() ? it : zipTree(it) }
+    manifest {
+        attributes "FMLCorePlugin": "net.ilexiconn.llibrary.LLibraryWrapper"
     }
 }
 

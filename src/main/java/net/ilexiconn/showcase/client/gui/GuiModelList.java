@@ -1,8 +1,8 @@
 package net.ilexiconn.showcase.client.gui;
 
-import net.ilexiconn.showcase.api.IModel;
-import net.ilexiconn.showcase.api.IModelParser;
-import net.ilexiconn.showcase.api.ShowcaseRegistry;
+import net.ilexiconn.showcase.api.ShowcaseAPI;
+import net.ilexiconn.showcase.api.model.IModel;
+import net.ilexiconn.showcase.api.model.IModelParser;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
 import net.minecraft.client.Minecraft;
@@ -40,12 +40,12 @@ public class GuiModelList extends GuiScrollingList {
     }
 
     public int getSize() {
-        return ShowcaseRegistry.getModelCount();
+        return ShowcaseAPI.getModelCount();
     }
 
     public void elementClicked(int index, boolean doubleClick) {
-        if (mouseX < listWidth + translation) {
-            parent.selectIndex(index);
+        if (mouseX < listWidth + translation && ShowcaseAPI.getModelIndex(parent.selectedModel) != index) {
+            parent.selectIndex(ShowcaseAPI.getModel(index));
         }
     }
 
@@ -65,8 +65,8 @@ public class GuiModelList extends GuiScrollingList {
         Minecraft mc = Minecraft.getMinecraft();
         FontRenderer fontRenderer = mc.fontRendererObj;
 
-        IModel model = ShowcaseRegistry.getModel(""); //todo
-        IModelParser parser = ShowcaseRegistry.getModelParserFor(model);
+        IModel model = ShowcaseAPI.getModel(index);
+        IModelParser parser = ShowcaseAPI.getModelParserFor(model);
 
         if (ShowcaseConfig.showPreviews) {
             fontRenderer.drawString(fontRenderer.trimStringToWidth(model.getName(), listWidth - 42), left + 36, slotTop + 2, 0xffffff);

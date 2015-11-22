@@ -5,6 +5,7 @@ import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.ilexiconn.showcase.Showcase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 
 public class MessageUpdate extends AbstractMessage<MessageUpdate> {
@@ -30,6 +31,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
         try {
+            Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -38,6 +40,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
         try {
+            Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
             Showcase.networkWrapper.sendToAll(new MessageUpdate(message));
         } catch (IllegalAccessException e) {

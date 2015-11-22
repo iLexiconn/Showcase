@@ -1,8 +1,0 @@
-tile.showcase.name=Showcase
-
-gui.showcase.empty=Showcase kom geen modellen vinden!
-gui.showcase.rotate=Draai
-gui.showcase.mirror=Spiegel
-gui.showcase.scale=Schaal
-gui.showcase.offset=Afstand
-gui.showcase.box=Doos

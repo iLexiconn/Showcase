@@ -1,9 +1,8 @@
 package net.ilexiconn.showcase.client.render;
 
-import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.IModel;
-import net.ilexiconn.showcase.api.IModelParser;
-import net.ilexiconn.showcase.api.ShowcaseRegistry;
+import net.ilexiconn.showcase.api.ShowcaseAPI;
+import net.ilexiconn.showcase.api.model.IModel;
+import net.ilexiconn.showcase.api.model.IModelParser;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.client.model.ModelQuestionMark;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
@@ -35,8 +34,8 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         showcase.modelOffsetYCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetYCurrent, showcase.modelOffsetY);
         showcase.modelOffsetZCurrent = AnimationHandler.smoothUpdate(showcase.modelOffsetZCurrent, showcase.modelOffsetZ);
 
-        IModel model = ShowcaseRegistry.getModel(""); //todo
-        IModelParser parser = ShowcaseRegistry.getModelParserFor(model);
+        IModel model = ShowcaseAPI.getModel(showcase.modelName);
+        IModelParser parser = ShowcaseAPI.getModelParserFor(model);
 
         GlStateManager.pushMatrix();
         GlStateManager.color(1f, 1f, 1f, 1f);
@@ -47,19 +46,8 @@ public class RenderEntityShowcase extends TileEntitySpecialRenderer {
         GlStateManager.translate(showcase.modelOffsetXCurrent / 8, showcase.modelOffsetYCurrent / 8, showcase.modelOffsetZCurrent / 8);
         GlStateManager.scale(showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16, showcase.modelScaleCurrent / 16);
         GlStateManager.rotate(showcase.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
-        if (model != null) {
-            GlStateManager.bindTexture(parser.getTextureId(model));
-            parser.render(model);
-            if (showcase.modelMirrored) {
-                GlStateManager.scale(-1f, -1f, -1f);
-                GlStateManager.rotate(180f, 0f, 0f, 1f);
-                GlStateManager.rotate(180f, 0f, 1f, 0f);
-                parser.render(model);
-            }
-        } else {
-            bindTexture(errorTexture);
-            errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
-        }
+        GlStateManager.bindTexture(parser.getTextureId(model));
+        parser.render(model);
         GlStateManager.popMatrix();
         if (Minecraft.getMinecraft().getRenderManager().isDebugBoundingBox()) {
             GlStateManager.pushMatrix();
