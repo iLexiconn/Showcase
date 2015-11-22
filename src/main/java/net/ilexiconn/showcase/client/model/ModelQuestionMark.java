@@ -1,11 +1,18 @@
 package net.ilexiconn.showcase.client.model;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.ilexiconn.showcase.api.model.IFallbackModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
-public class ModelQuestionMark extends ModelBase {
+public class ModelQuestionMark extends ModelBase implements IFallbackModel {
+    public ResourceLocation texture = new ResourceLocation("showcase", "textures/models/error.png");
+
     public ModelRenderer shape1;
     public ModelRenderer shape2;
     public ModelRenderer shape3;
@@ -70,5 +77,23 @@ public class ModelQuestionMark extends ModelBase {
         GL11.glTranslated(-shape1.rotationPointX * f5, -shape1.rotationPointY * f5, -shape1.rotationPointZ * f5);
         shape1.render(f5);
         GL11.glPopMatrix();
+    }
+
+    @SideOnly(Side.CLIENT)
+    public void render() {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
+        render(null, 0f, 0f, 0f, 0f, 0f, 0.0625f);
+    }
+
+    public String getName() {
+        return "QuestionMark";
+    }
+
+    public String getAuthor() {
+        return "iLexiconn";
+    }
+
+    public int getCubeCount() {
+        return 10;
     }
 }

@@ -1,7 +1,7 @@
 package net.ilexiconn.showcase.server.tabula;
 
 import net.ilexiconn.llibrary.common.json.container.JsonTabulaModel;
-import net.ilexiconn.showcase.api.IModel;
+import net.ilexiconn.showcase.api.model.IModel;
 
 import java.awt.image.BufferedImage;
 

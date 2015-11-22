@@ -1,6 +1,5 @@
 package net.ilexiconn.showcase.server.tabula;
 
-import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -9,7 +8,7 @@ import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.json.JsonFactory;
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.IModelParser;
+import net.ilexiconn.showcase.api.model.IModelParser;
 import net.minecraft.client.renderer.texture.TextureUtil;
 
 import javax.imageio.ImageIO;
@@ -19,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Enumeration;
-import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -35,10 +33,6 @@ public class TabulaModelParser implements IModelParser<TabulaModel> {
 
     public String getExtension() {
         return "tbl";
-    }
-
-    public List<TabulaModel> getModelList() {
-        return Lists.newArrayList(modelMap.keySet());
     }
 
     @SideOnly(Side.CLIENT)

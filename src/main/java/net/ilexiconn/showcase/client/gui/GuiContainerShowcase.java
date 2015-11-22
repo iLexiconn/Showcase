@@ -6,23 +6,23 @@ import cpw.mods.fml.client.config.GuiUtils;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.IModel;
-import net.ilexiconn.showcase.api.IModelParser;
-import net.ilexiconn.showcase.api.ShowcaseRegistry;
-import net.ilexiconn.showcase.client.model.ModelQuestionMark;
+import net.ilexiconn.showcase.api.ShowcaseAPI;
+import net.ilexiconn.showcase.api.model.IModel;
+import net.ilexiconn.showcase.api.model.IModelParser;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.container.ContainerShowcase;
 import net.ilexiconn.showcase.server.message.MessageData;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
@@ -33,17 +33,14 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiModelList modelList;
     public int listWidth;
 
-    public ModelQuestionMark errorModel = new ModelQuestionMark();
-    public ResourceLocation errorTexture = new ResourceLocation("showcase", "textures/models/error.png");
     public AxisAlignedBB box = AxisAlignedBB.getBoundingBox(-0.5f, 0.5f, -0.5f, 0.5f, 1.5f, 0.5f);
 
-    public int selectedIndex = 0;
+    public int selectedIndex = -1;
     public IModel selectedModel;
 
     public GuiButton buttonHide;
     public GuiButton buttonRotateLeft;
     public GuiButton buttonRotateRight;
-    public GuiButton buttonMirror;
     public GuiButton buttonScalePlus;
     public GuiButton buttonScaleMinus;
     public GuiButton buttonBox;
@@ -59,6 +56,16 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiUnicodeGlyphButton buttonResetScale;
     public GuiUnicodeGlyphButton buttonResetOffset;
 
+    public int prevMouseX;
+    public int prevMouseY;
+
+    public float cameraYaw;
+    public float cameraPitch;
+    public float cameraOffsetX;
+    public float cameraOffsetY;
+
+    public float cameraZoom = 1.0F;
+
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
         showcase = container;
@@ -67,15 +74,16 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public void initGui() {
         super.initGui();
-        for (IModel model : ShowcaseRegistry.getModelList()) {
+        for (IModel model : ShowcaseAPI.getModelList()) {
             listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getName()));
             listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getAuthor()));
         }
         listWidth = Math.min(listWidth, 150);
         modelList = new GuiModelList(this, listWidth);
 
-        if (!ShowcaseRegistry.getModelList().isEmpty()) {
-            //selectIndex(Showcase.proxy.getModelIndex(blockEntity.modelName)); todo
+        if (ShowcaseAPI.getModelCount() > 0) {
+            selectedModel = ShowcaseAPI.getModel(blockEntity.modelName);
+            selectedIndex = ShowcaseAPI.getModelIndex(selectedModel);
             if (blockEntity.collapsedMenu) {
                 buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), 5, 10, 20, 20, ">");
                 modelList.forceTranslation(listWidth);
@@ -89,8 +97,6 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonList.add(buttonRotateRight = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, ">"));
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
-
-            buttonList.add(buttonMirror = new GuiButton(ButtonIds.MIRROR.ordinal(), 0, 15, 20, 20, blockEntity.modelMirrored ? "O" : "X"));
 
             buttonList.add(buttonScalePlus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "^"));
             buttonList.add(buttonScaleMinus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "v"));
@@ -147,10 +153,6 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 31;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
             Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelRotation, MessageData.ROTATION));
-        } else if (button.id == ButtonIds.MIRROR.ordinal()) {
-            blockEntity.modelMirrored = !blockEntity.modelMirrored;
-            buttonMirror.displayString = blockEntity.modelMirrored ? "O" : "X";
-            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelMirrored, MessageData.MIRROR));
         } else if (button.id == ButtonIds.SCALE.ordinal()) {
             if (button == buttonScalePlus) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
@@ -245,7 +247,7 @@ public class GuiContainerShowcase extends GuiContainer {
     }
 
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        if (ShowcaseRegistry.getModelList().isEmpty()) {
+        if (ShowcaseAPI.getModelCount() == 0) {
             String s = I18n.format("gui.showcase.empty");
             drawScaledString(s, width / 2 - fontRendererObj.getStringWidth(s), height / 2 - fontRendererObj.FONT_HEIGHT, 0xffffff, 2F);
         } else {
@@ -253,8 +255,13 @@ public class GuiContainerShowcase extends GuiContainer {
             GL11.glPushMatrix();
             startGlScissor(menuSize, 40, width, height - 80);
             GL11.glEnable(GL11.GL_BLEND);
+            GL11.glDisable(GL11.GL_CULL_FACE);
             GL11.glColor4d(1f, 1f, 1f, 1f);
             GL11.glTranslated(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
+            GL11.glTranslated(-cameraOffsetX * 10, cameraOffsetY * 10, 0.0F);
+            GL11.glRotated(cameraPitch, 1.0F, 0.0F, 0.0F);
+            GL11.glRotated(cameraYaw, 0.0F, 1.0F, 0.0F);
+            GL11.glScaled(cameraZoom, cameraZoom, cameraZoom);
             GL11.glScaled(-40f, 40f, 40f);
             GL11.glRotated(180f, 0f, 1f, 0f);
             GL11.glRotated(35.264f, 1.0f, 0.0f, 0.0f);
@@ -262,25 +269,18 @@ public class GuiContainerShowcase extends GuiContainer {
             GL11.glTranslated(blockEntity.modelOffsetXCurrent / 8, blockEntity.modelOffsetYCurrent / 8, blockEntity.modelOffsetZCurrent / 8);
             GL11.glScaled(blockEntity.modelScaleCurrent / 16, blockEntity.modelScaleCurrent / 16, blockEntity.modelScaleCurrent / 16);
             GL11.glRotated(blockEntity.modelRotationCurrent * 11.25f, 0f, 1f, 0f);
-            if (selectedModel != null) {
-                IModelParser parser = ShowcaseRegistry.getModelParserFor(selectedModel);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, parser.getTextureId(selectedModel));
-                parser.render(selectedModel);
-                if (blockEntity.modelMirrored) {
-                    GL11.glScaled(-1f, -1f, -1f);
-                    GL11.glRotated(180f, 0f, 0f, 1f);
-                    GL11.glRotated(180f, 0f, 1f, 0f);
-                    parser.render(selectedModel);
-                }
-            } else {
-                mc.getTextureManager().bindTexture(errorTexture);
-                errorModel.render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
-            }
+            IModelParser parser = ShowcaseAPI.getModelParserFor(selectedModel);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, parser.getTextureId(selectedModel));
+            parser.render(selectedModel);
             GL11.glPopMatrix();
             if (blockEntity.drawBox) {
                 GL11.glPushMatrix();
                 GL11.glColor4d(1f, 1f, 1f, 1f);
                 GL11.glTranslated(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
+                GL11.glTranslated(-cameraOffsetX * 10, cameraOffsetY * 10, 0.0F);
+                GL11.glRotated(cameraPitch, 1.0F, 0.0F, 0.0F);
+                GL11.glRotated(cameraYaw, 0.0F, 1.0F, 0.0F);
+                GL11.glScaled(cameraZoom, cameraZoom, cameraZoom);
                 GL11.glScaled(-40f, 40f, 40f);
                 GL11.glRotated(180f, 0f, 1f, 0f);
                 GL11.glRotated(35.264f, 1.0f, 0.0f, 0.0f);
@@ -293,6 +293,26 @@ public class GuiContainerShowcase extends GuiContainer {
                 GL11.glPopMatrix();
             }
             endGlScissor();
+
+            if (Mouse.isButtonDown(0)) {
+                if (GuiScreen.isShiftKeyDown() || Mouse.isButtonDown(2)) {
+                    float factor = 0.0125F;
+                    cameraOffsetX += (prevMouseX - mouseX) * factor;
+                    cameraOffsetY -= (prevMouseY - mouseY) * factor;
+                } else {
+                    if (GuiScreen.isCtrlKeyDown()) {
+                        float factor = 0.0125F;
+                        cameraZoom += (prevMouseY - mouseY) * factor;
+                    } else {
+                        float factor = 0.5F;
+                        cameraYaw -= (prevMouseX - mouseX) * factor;
+                        cameraPitch += (prevMouseY - mouseY) * factor;
+                    }
+                }
+            }
+
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
             menuSize = (int) (listWidth + modelList.getTranslation());
@@ -310,10 +330,6 @@ public class GuiContainerShowcase extends GuiContainer {
             buttonRotateLeft.xPosition = menuSize + 5;
             buttonRotateRight.xPosition = menuSize + 30;
             buttonResetRotation.xPosition = menuSize + 55;
-
-            int positionMirror = menuSize - 10 + (width - menuSize) / 2;
-            drawCenteredString(fontRendererObj, I18n.format("gui.showcase.mirror"), positionMirror + 10, 5, 0xffffff);
-            buttonMirror.xPosition = positionMirror;
 
             int positionScale = menuSize - 10 + (width - menuSize) / 2;
             drawCenteredString(fontRendererObj, I18n.format("gui.showcase.scale"), positionScale + 10, height - 35, 0xffffff);
@@ -334,10 +350,10 @@ public class GuiContainerShowcase extends GuiContainer {
         GL11.glPopMatrix();
     }
 
-    public void selectIndex(int index) {
-        //blockEntity.modelName = Showcase.proxy.getModelName(index); todo
-        selectedIndex = index;
-        //selectedModel = Showcase.proxy.getTabulaModel(selectedIndex); todo
+    public void selectIndex(IModel model) {
+        blockEntity.modelName = model.getName();
+        selectedIndex = ShowcaseAPI.getModelIndex(model);
+        selectedModel = model;
         Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getPosX(), showcase.getPosY(), showcase.getPosZ(), blockEntity.modelName, MessageData.NAME));
     }
 
@@ -363,11 +379,11 @@ public class GuiContainerShowcase extends GuiContainer {
             mc.displayGuiScreen(null);
             onGuiClosed();
         }
-        /*int currentIndex = Showcase.proxy.getModelIndex(blockEntity.modelName); todo
+        int currentIndex = ShowcaseAPI.getModelIndex(selectedModel);
         if (currentIndex != selectedIndex) {
-            blockEntity.modelName = Showcase.proxy.getModelName(currentIndex);
+            selectedModel = ShowcaseAPI.getModel(currentIndex);
+            blockEntity.modelName = selectedModel.getName();
             selectedIndex = currentIndex;
-            selectedModel = Showcase.proxy.getTabulaModel(selectedIndex);
-        }*/
+        }
     }
 }

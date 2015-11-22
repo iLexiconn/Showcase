@@ -1,19 +1,18 @@
-package net.ilexiconn.showcase.api;
+package net.ilexiconn.showcase.api.model;
 
+import com.google.common.annotations.Beta;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
+@Beta
 public interface IModelParser<T extends IModel> {
     File[] getDirectories();
 
     String getExtension();
-
-    List<T> getModelList();
 
     @SideOnly(Side.CLIENT)
     T parse(File file) throws IOException;

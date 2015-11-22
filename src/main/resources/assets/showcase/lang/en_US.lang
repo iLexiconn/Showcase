@@ -2,7 +2,8 @@ tile.showcase.name=Showcase
 
 gui.showcase.empty=Showcase couldn't find any models!
 gui.showcase.rotate=Rotate
-gui.showcase.mirror=Mirror
 gui.showcase.scale=Scale
 gui.showcase.offset=Offset
 gui.showcase.box=Box
+
+showcase.reload=Reload Models

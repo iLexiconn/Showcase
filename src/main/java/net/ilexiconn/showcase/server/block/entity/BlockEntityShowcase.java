@@ -11,7 +11,6 @@ import net.minecraft.util.AxisAlignedBB;
 
 public class BlockEntityShowcase extends TileEntity {
     public String modelName = "";
-    public boolean modelMirrored = false;
 
     public int modelRotation = 0;
     public float modelRotationCurrent = 0f;
@@ -39,7 +38,6 @@ public class BlockEntityShowcase extends TileEntity {
         modelName = compound.getString("ModelName");
         modelRotation = compound.getInteger("ModelRotation");
         modelScale = compound.getInteger("ModelScale");
-        modelMirrored = compound.getBoolean("ModelMirrored");
         collapsedMenu = compound.getBoolean("CollapsedMenu");
         drawBox = compound.getBoolean("DrawBox");
         modelOffsetX = compound.getInteger("ModelOffsetX");
@@ -58,7 +56,6 @@ public class BlockEntityShowcase extends TileEntity {
         compound.setString("ModelName", modelName);
         compound.setInteger("ModelRotation", modelRotation);
         compound.setInteger("ModelScale", modelScale);
-        compound.setBoolean("ModelMirrored", modelMirrored);
         compound.setBoolean("CollapsedMenu", collapsedMenu);
         compound.setBoolean("DrawBox", drawBox);
         compound.setInteger("ModelOffsetX", modelOffsetX);

@@ -1,4 +1,4 @@
-@API(owner = "showcase", apiVersion = "0.2.0", provides = "showcase-api")
+@API(owner = "showcase", apiVersion = ShowcaseAPI.VERSION, provides = "showcase-api")
 package net.ilexiconn.showcase.api;
 
 import cpw.mods.fml.common.API;

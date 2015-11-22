@@ -1,5 +1,6 @@
 package net.ilexiconn.showcase.server.message;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
@@ -35,6 +36,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
         try {
+            Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.posX, message.posY, message.posZ), message.object);
         } catch (IllegalAccessException e) {
             e.printStackTrace();
@@ -43,6 +45,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
         try {
+            Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.posX, message.posY, message.posZ), message.object);
             Showcase.networkWrapper.sendToAll(new MessageUpdate(message));
         } catch (IllegalAccessException e) {

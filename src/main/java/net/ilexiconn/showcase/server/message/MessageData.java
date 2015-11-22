@@ -8,7 +8,6 @@ public enum MessageData {
     NAME("modelName", String.class),
     MENU("collapsedMenu", boolean.class),
     ROTATION("modelRotation", int.class),
-    MIRROR("modelMirrored", boolean.class),
     SCALE("modelScale", int.class),
     BOX("drawBox", boolean.class),
     OFFSET_X("modelOffsetX", int.class),
