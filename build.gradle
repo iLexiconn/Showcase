@@ -83,6 +83,7 @@ jar {
     from configurations.include.collect { it.isDirectory() ? it : zipTree(it) }
     manifest {
         attributes "FMLCorePlugin": "net.ilexiconn.llibrary.LLibraryWrapper"
+        attributes "FMLCorePluginContainsFMLMod": "true"
     }
 }
 
