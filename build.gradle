@@ -1,7 +1,23 @@
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-    id "com.matthewprenger.cursegradle" version "1.0.3"
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/repositories/snapshots/"
+        }
+    }
+    dependencies {
+        classpath "net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT"
+        classpath "com.matthewprenger:CurseGradle:1.0-SNAPSHOT"
+    }
 }
+
+apply plugin: "net.minecraftforge.gradle.forge"
+apply plugin: "com.matthewprenger.cursegradle"
 
 ext.configFile = file "build.properties"
 configFile.withReader {
@@ -26,10 +42,10 @@ archivesBaseName = config.mod_name
 sourceCompatibility = targetCompatibility = 1.6
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version
+    version = config.minecraft_version + "-" + config.forge_version + "-" + config.minecraft_version
     runDir = "minecraft"
-    mappings = "snapshot_20141130"
-    replace '${version}', project.version
+    mappings = "snapshot_20151122"
+    replace "${version}", project.version
 }
 
 repositories {
@@ -40,13 +56,8 @@ repositories {
     }
 }
 
-configurations {
-    include
-}
-
 dependencies {
     compile "net.ilexiconn:llibrary:${config.llibrary_version}-${config.minecraft_version}:dev"
-    include "net.ilexiconn:llibrary-wrapper:${config.minecraft_version}"
 }
 
 processResources {
@@ -61,14 +72,6 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
-    }
-}
-
-jar {
-    from configurations.include.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest {
-        attributes "FMLCorePlugin": "net.ilexiconn.llibrary.LLibraryWrapper"
-        attributes "FMLCorePluginContainsFMLMod": "true"
     }
 }
 
@@ -124,7 +127,7 @@ curseforge {
 }
 
 String getVersionFromJava() {
-    return getVersionFromJavaWithoutMc() + "-1.8";
+    return getVersionFromJavaWithoutMc() + "-" + config.minecraft_version;
 }
 
 String getVersionFromJavaWithoutMc() {
