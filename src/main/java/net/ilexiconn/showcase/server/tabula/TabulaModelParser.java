@@ -65,7 +65,7 @@ public class TabulaModelParser implements IModelParser<TabulaModel> {
     }
 
     public void encode(ByteBuf buf, TabulaModel model) {
-        //todo
+        buf.writeInt(model.getTextureWidth());
     }
 
     public TabulaModel decode(ByteBuf buf) {

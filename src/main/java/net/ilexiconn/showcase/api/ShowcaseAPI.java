@@ -27,6 +27,10 @@ public class ShowcaseAPI {
         fallbackModel = fallback;
     }
 
+    public static IFallbackModel getFallbackModel() {
+        return fallbackModel;
+    }
+
     public static <T extends IModel> void registerModelParser(String name, IModelParser<T> type) {
         if (hasModelParser(name)) {
             throw new DuplicateModelsException();

@@ -17,4 +17,16 @@ public class TabulaModel extends JsonTabulaModel implements IModel {
     public String getAuthor() {
         return authorName;
     }
+
+    public BufferedImage getTexture() {
+        return texture;
+    }
+
+    public String getModelName() {
+        return modelName;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
 }

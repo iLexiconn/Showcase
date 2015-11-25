@@ -2,6 +2,7 @@ package net.ilexiconn.showcase.api.model;
 
 import com.google.common.annotations.Beta;
 import io.netty.buffer.ByteBuf;
+import net.ilexiconn.showcase.api.ShowcaseAPI;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +18,7 @@ public class ModelFallbackParser implements IModelParser<IFallbackModel> {
     }
 
     public IFallbackModel parse(File file) throws IOException {
-        return null;
+        return ShowcaseAPI.getFallbackModel();
     }
 
     public void encode(ByteBuf buf, IFallbackModel model) {
@@ -25,7 +26,7 @@ public class ModelFallbackParser implements IModelParser<IFallbackModel> {
     }
 
     public IFallbackModel decode(ByteBuf buf) {
-        return null;
+        return ShowcaseAPI.getFallbackModel();
     }
 
     public int getTextureId(IFallbackModel model) {

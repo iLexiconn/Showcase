@@ -44,7 +44,7 @@ sourceCompatibility = targetCompatibility = 1.6
 minecraft {
     version = config.minecraft_version + "-" + config.forge_version + "-" + config.minecraft_version
     runDir = "minecraft"
-    replace '${version}', project.version
+    replace "${version}", project.version
 }
 
 repositories {
@@ -55,13 +55,8 @@ repositories {
     }
 }
 
-configurations {
-    include
-}
-
 dependencies {
     compile "net.ilexiconn:llibrary:${config.llibrary_version}-${config.minecraft_version}:dev"
-    include "net.ilexiconn:llibrary-wrapper:${config.minecraft_version}"
 }
 
 processResources {
@@ -76,14 +71,6 @@ processResources {
 
     from(sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
-    }
-}
-
-jar {
-    from configurations.include.collect { it.isDirectory() ? it : zipTree(it) }
-    manifest {
-        attributes "FMLCorePlugin": "net.ilexiconn.llibrary.LLibraryWrapper"
-        attributes "FMLCorePluginContainsFMLMod": "true"
     }
 }
 
@@ -144,7 +131,7 @@ curseforge {
 }
 
 String getVersionFromJava() {
-    return getVersionFromJavaWithoutMc() + "-1.7.10";
+    return getVersionFromJavaWithoutMc() + "-" + config.minecraft_version;
 }
 
 String getVersionFromJavaWithoutMc() {
