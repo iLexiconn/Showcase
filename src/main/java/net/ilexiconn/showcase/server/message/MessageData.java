@@ -17,7 +17,7 @@ public enum MessageData {
     private Field field;
     private Class<?> classType;
 
-    private MessageData(String name, Class<?> type) {
+    MessageData(String name, Class<?> type) {
         try {
             field = BlockEntityShowcase.class.getField(name);
         } catch (NoSuchFieldException e) {

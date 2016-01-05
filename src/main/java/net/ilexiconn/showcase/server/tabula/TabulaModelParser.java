@@ -9,6 +9,7 @@ import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.json.JsonFactory;
 import net.ilexiconn.showcase.Showcase;
 import net.ilexiconn.showcase.api.model.IModelParser;
+import net.ilexiconn.showcase.server.util.ByteBufUtil;
 import net.minecraft.client.renderer.texture.TextureUtil;
 
 import javax.imageio.ImageIO;
@@ -27,14 +28,17 @@ public class TabulaModelParser implements IModelParser<TabulaModel> {
     public Map<TabulaModel, ModelJson> modelMap;
     public Map<TabulaModel, Integer> textureMap = Maps.newHashMap();
 
+    @Override
     public File[] getDirectories() {
         return new File[]{new File("mods" + File.separator + "tabula" + File.separator + "saves"), new File("showcase")};
     }
 
+    @Override
     public String getExtension() {
         return "tbl";
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public TabulaModel parse(File file) throws IOException {
         if (modelMap == null) {
@@ -64,24 +68,38 @@ public class TabulaModelParser implements IModelParser<TabulaModel> {
         return null;
     }
 
+    @Override
     public void encode(ByteBuf buf, TabulaModel model) {
-        buf.writeInt(model.getTextureWidth());
+        try {
+            ByteBufUtil.writeObject(buf, model);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
+    @Override
     public TabulaModel decode(ByteBuf buf) {
-        return null; //todo
+        try {
+            return ByteBufUtil.readObject(buf, TabulaModel.class);
+        } catch (Exception e) {
+            Showcase.logger.error(SimpleCrashReport.makeCrashReport(e, "Unable to decode Tabula model"));
+            return null;
+        }
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public int getTextureId(TabulaModel model) {
         return textureMap.get(model);
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public void render(TabulaModel model) {
         modelMap.get(model).render(Showcase.proxy.getDummyEntity(), 0f, 0f, 0f, 0f, 0f, 0.0625f);
     }
 
+    @Override
     public Class<TabulaModel> getModelClass() {
         return TabulaModel.class;
     }

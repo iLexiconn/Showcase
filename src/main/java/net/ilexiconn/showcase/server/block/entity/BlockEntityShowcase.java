@@ -28,11 +28,13 @@ public class BlockEntityShowcase extends TileEntity {
     public int modelOffsetZ = 0;
     public float modelOffsetZCurrent = 0f;
 
+    @Override
     @SideOnly(Side.CLIENT)
     public AxisAlignedBB getRenderBoundingBox() {
         return INFINITE_EXTENT_AABB;
     }
 
+    @Override
     public void readFromNBT(NBTTagCompound compound) {
         super.readFromNBT(compound);
         modelName = compound.getString("ModelName");
@@ -51,6 +53,7 @@ public class BlockEntityShowcase extends TileEntity {
         modelOffsetZCurrent = modelOffsetZ;
     }
 
+    @Override
     public void writeToNBT(NBTTagCompound compound) {
         super.writeToNBT(compound);
         compound.setString("ModelName", modelName);
@@ -63,12 +66,14 @@ public class BlockEntityShowcase extends TileEntity {
         compound.setInteger("ModelOffsetZ", modelOffsetZ);
     }
 
+    @Override
     public Packet getDescriptionPacket() {
         NBTTagCompound compound = new NBTTagCompound();
         writeToNBT(compound);
         return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 0, compound);
     }
 
+    @Override
     public void onDataPacket(NetworkManager networkManager, S35PacketUpdateTileEntity packet) {
         readFromNBT(packet.func_148857_g());
     }

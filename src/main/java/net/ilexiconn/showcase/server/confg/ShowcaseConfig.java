@@ -6,6 +6,7 @@ import net.minecraftforge.common.config.Configuration;
 public class ShowcaseConfig implements IConfigHandler {
     public static boolean showPreviews;
 
+    @Override
     public void loadConfig(Configuration config) {
         showPreviews = config.getBoolean("Show Previews", Configuration.CATEGORY_GENERAL, true, "Show previews in the model list", "");
     }

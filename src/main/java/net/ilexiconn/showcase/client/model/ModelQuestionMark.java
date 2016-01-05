@@ -1,7 +1,5 @@
 package net.ilexiconn.showcase.client.model;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.ilexiconn.showcase.api.model.IFallbackModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
@@ -68,6 +66,7 @@ public class ModelQuestionMark extends ModelBase implements IFallbackModel {
         shape4.addChild(shape4sub1);
     }
 
+    @Override
     public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
         GL11.glPushMatrix();
         GL11.glTranslated(shape1.offsetX, shape1.offsetY, shape1.offsetZ);
@@ -79,7 +78,6 @@ public class ModelQuestionMark extends ModelBase implements IFallbackModel {
         GL11.glPopMatrix();
     }
 
-    @SideOnly(Side.CLIENT)
     public void render() {
         Minecraft.getMinecraft().getTextureManager().bindTexture(texture);
         render(null, 0f, 0f, 0f, 0f, 0f, 0.0625f);

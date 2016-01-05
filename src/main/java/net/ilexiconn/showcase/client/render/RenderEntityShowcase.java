@@ -19,7 +19,8 @@ import org.lwjgl.opengl.GL11;
 public class RenderEntityShowcase extends TileEntitySpecialRenderer {
     public AxisAlignedBB box = AxisAlignedBB.getBoundingBox(0f, 0f, 0f, 1f, 1f, 1f);
 
-    public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float partialTicks) {
+    @Override
+    public void renderTileEntityAt(TileEntity tileEntity, double posX, double posY, double posZ, float f) {
         BlockEntityShowcase showcase = (BlockEntityShowcase) tileEntity;
         showcase.modelRotationCurrent = AnimationHandler.smoothUpdate(showcase.modelRotationCurrent, showcase.modelRotation);
         showcase.modelScaleCurrent = AnimationHandler.smoothUpdate(showcase.modelScaleCurrent, showcase.modelScale);

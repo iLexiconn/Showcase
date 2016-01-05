@@ -38,28 +38,34 @@ public class GuiModelList extends GuiScrollingList {
         translationTarget = forcedTranslation;
     }
 
+    @Override
     public int getSize() {
         return ShowcaseAPI.getModelCount();
     }
 
+    @Override
     public void elementClicked(int index, boolean doubleClick) {
         if (mouseX < listWidth + translation && ShowcaseAPI.getModelIndex(parent.selectedModel) != index) {
             parent.selectIndex(ShowcaseAPI.getModel(index));
         }
     }
 
+    @Override
     public boolean isSelected(int index) {
         return parent.isSelected(index);
     }
 
+    @Override
     public void drawBackground() {
 
     }
 
+    @Override
     public int getContentHeight() {
         return getSize() * 35 + 1;
     }
 
+    @Override
     public void drawSlot(int index, int entryRight, int slotTop, int slotBuffer, Tessellator tessellator) {
         Minecraft mc = Minecraft.getMinecraft();
         FontRenderer fontRenderer = mc.fontRenderer;
@@ -104,6 +110,7 @@ public class GuiModelList extends GuiScrollingList {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
+    @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         translation = AnimationHandler.smoothUpdate(translation, -translationTarget);
 

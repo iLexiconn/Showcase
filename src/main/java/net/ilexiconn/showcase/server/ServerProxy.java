@@ -5,13 +5,16 @@ import net.minecraft.nbt.NBTTagCompound;
 
 public class ServerProxy {
     private Entity entityDummy = new Entity(null) {
+        @Override
         public void entityInit() {
         }
 
-        public void readEntityFromNBT(NBTTagCompound tagCompound) {
+        @Override
+        public void readEntityFromNBT(NBTTagCompound tagCompund) {
         }
 
-        public void writeEntityToNBT(NBTTagCompound tagCompound) {
+        @Override
+        public void writeEntityToNBT(NBTTagCompound tagCompund) {
         }
     };
 
@@ -20,6 +23,10 @@ public class ServerProxy {
     }
 
     public void init() {
+
+    }
+
+    public void postInit() {
 
     }
 

@@ -1,10 +1,10 @@
 package net.ilexiconn.showcase;
 
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
@@ -20,6 +20,7 @@ import net.ilexiconn.showcase.server.ServerProxy;
 import net.ilexiconn.showcase.server.block.BlockShowcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
+import net.ilexiconn.showcase.server.message.MessageSend;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.ilexiconn.showcase.server.tabula.TabulaModelParser;
 import net.minecraft.block.Block;
@@ -45,13 +46,14 @@ public class Showcase {
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
         AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 0, Side.SERVER);
         AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 1, Side.CLIENT);
+        AbstractMessage.registerMessage(networkWrapper, MessageSend.class, 2, Side.CLIENT);
+        AbstractMessage.registerMessage(networkWrapper, MessageSend.class, 3, Side.SERVER);
 
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");
         GameRegistry.registerTileEntity(BlockEntityShowcase.class, "showcaseEntity");
 
         ServerEventHandler eventHandler = new ServerEventHandler();
-        FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
         NetworkRegistry.INSTANCE.registerGuiHandler(Showcase.instance, new ServerGuiHandler());
 
@@ -65,5 +67,10 @@ public class Showcase {
     @Mod.EventHandler
     public void init(FMLInitializationEvent event) {
         proxy.init();
+    }
+
+    @Mod.EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        proxy.postInit();
     }
 }

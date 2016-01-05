@@ -7,26 +7,16 @@ import java.awt.image.BufferedImage;
 
 public class TabulaModel extends JsonTabulaModel implements IModel {
     public transient BufferedImage texture;
-    private String modelName;
-    private String authorName;
+    protected String modelName;
+    protected String authorName;
 
+    @Override
     public String getName() {
         return modelName;
     }
 
+    @Override
     public String getAuthor() {
-        return authorName;
-    }
-
-    public BufferedImage getTexture() {
-        return texture;
-    }
-
-    public String getModelName() {
-        return modelName;
-    }
-
-    public String getAuthorName() {
         return authorName;
     }
 }
