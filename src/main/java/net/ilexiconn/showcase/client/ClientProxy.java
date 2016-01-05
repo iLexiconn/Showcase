@@ -12,7 +12,6 @@ import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
@@ -24,7 +23,6 @@ public class ClientProxy extends ServerProxy {
 
     public void preInit() {
         ClientEventHandler eventHandler = new ClientEventHandler();
-        FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
         ClientRegistry.registerKeyBinding(keyReload);
     }

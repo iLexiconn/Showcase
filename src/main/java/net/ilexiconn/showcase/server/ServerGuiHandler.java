@@ -10,10 +10,12 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class ServerGuiHandler implements IGuiHandler {
+    @Override
     public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return new ContainerShowcase(world, new BlockPos(x, y, z));
     }
 
+    @Override
     @SideOnly(Side.CLIENT)
     public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
         return new GuiContainerShowcase(new ContainerShowcase(world, new BlockPos(x, y, z)));

@@ -3,10 +3,13 @@ package net.ilexiconn.showcase.server.message;
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.ilexiconn.showcase.Showcase;
+import net.ilexiconn.showcase.api.ShowcaseAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MessageUpdate extends AbstractMessage<MessageUpdate> {
     public BlockPos blockPos;
@@ -29,6 +32,8 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
         messageData = message.messageData;
     }
 
+    @Override
+    @SideOnly(Side.CLIENT)
     public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
         try {
             Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
@@ -38,16 +43,21 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
         }
     }
 
+    @Override
     public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
         try {
             Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
             Showcase.networkWrapper.sendToAll(new MessageUpdate(message));
+            if (message.object instanceof String) {
+                Showcase.networkWrapper.sendToAll(new MessageSend(ShowcaseAPI.getModel((String) message.object), message.blockPos));
+            }
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         }
     }
 
+    @Override
     public void fromBytes(ByteBuf buf) {
         blockPos = new BlockPos(buf.readInt(), buf.readInt(), buf.readInt());
         messageData = MessageData.valueOf(ByteBufUtils.readUTF8String(buf));
@@ -60,6 +70,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
         }
     }
 
+    @Override
     public void toBytes(ByteBuf buf) {
         buf.writeInt(blockPos.getX());
         buf.writeInt(blockPos.getY());

@@ -10,11 +10,11 @@ import net.ilexiconn.showcase.server.ServerProxy;
 import net.ilexiconn.showcase.server.block.BlockShowcase;
 import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
+import net.ilexiconn.showcase.server.message.MessageSend;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.ilexiconn.showcase.server.tabula.TabulaModelParser;
 import net.minecraft.block.Block;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.SidedProxy;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
@@ -46,13 +46,14 @@ public class Showcase {
         networkWrapper = NetworkRegistry.INSTANCE.newSimpleChannel("showcase");
         AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 0, Side.SERVER);
         AbstractMessage.registerMessage(networkWrapper, MessageUpdate.class, 1, Side.CLIENT);
+        AbstractMessage.registerMessage(networkWrapper, MessageSend.class, 2, Side.CLIENT);
+        AbstractMessage.registerMessage(networkWrapper, MessageSend.class, 3, Side.SERVER);
 
         blockShowcase = new BlockShowcase();
         GameRegistry.registerBlock(blockShowcase, "showcase");
         GameRegistry.registerTileEntity(BlockEntityShowcase.class, "showcaseEntity");
 
         ServerEventHandler eventHandler = new ServerEventHandler();
-        FMLCommonHandler.instance().bus().register(eventHandler);
         MinecraftForge.EVENT_BUS.register(eventHandler);
         NetworkRegistry.INSTANCE.registerGuiHandler(Showcase.instance, new ServerGuiHandler());
 

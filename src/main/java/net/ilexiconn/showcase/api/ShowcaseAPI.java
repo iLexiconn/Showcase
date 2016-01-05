@@ -77,6 +77,28 @@ public class ShowcaseAPI {
         return null;
     }
 
+    public static String getModelParserNameFor(IModel model) {
+        if (model != null) {
+            if (model instanceof IFallbackModel) {
+                return "fallbackParser";
+            } else {
+                return getModelParserNameFor(model.getClass());
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public static String getModelParserNameFor(Class<? extends IModel> model) {
+        IModelParser<? extends IModel> modelParser = getModelParserFor(model);
+        for (Map.Entry<String, IModelParser<? extends IModel>> entry : modelTypeMap.entrySet()) {
+            if (entry.getValue() == modelParser) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public static List<IModel> getModelList() {
         return modelList;
     }
@@ -117,6 +139,10 @@ public class ShowcaseAPI {
         return i;
     }
 
+    public static <T extends IModel> T getTypeFor(IModelParser<? extends IModel> modelParser) {
+        return null;
+    }
+
     public static void reloadModels() {
         modelList.clear();
         for (IModelParser<?> modelParser : getModelParserList()) {
@@ -141,5 +167,9 @@ public class ShowcaseAPI {
                 }
             }
         }
+    }
+
+    public static void addModel(IModel model) {
+        modelList.add(model);
     }
 }

@@ -22,6 +22,7 @@ public class BlockShowcase extends BlockContainer {
         setResistance(-1f);
     }
 
+    @Override
     public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player, EnumFacing side, float hitX, float hitY, float hitZ) {
         if (!player.isSneaking() && player.capabilities.isCreativeMode) {
             player.openGui(Showcase.instance, 0, world, pos.getX(), pos.getY(), pos.getZ());
@@ -31,22 +32,27 @@ public class BlockShowcase extends BlockContainer {
         }
     }
 
+    @Override
     public boolean isFullCube() {
         return false;
     }
 
+    @Override
     public int getRenderType() {
         return -1;
     }
 
+    @Override
     public boolean isOpaqueCube() {
         return false;
     }
 
+    @Override
     public AxisAlignedBB getCollisionBoundingBox(World world, BlockPos pos, IBlockState state) {
         return null;
     }
 
+    @Override
     public TileEntity createNewTileEntity(World world, int meta) {
         return new BlockEntityShowcase();
     }

@@ -42,9 +42,9 @@ archivesBaseName = config.mod_name
 sourceCompatibility = targetCompatibility = 1.6
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version + "-" + config.minecraft_version
+    version = config.minecraft_version + "-" + config.forge_version
     runDir = "minecraft"
-    mappings = "snapshot_20151122"
+    mappings = "stable_20"
     replace "${version}", project.version
 }
 

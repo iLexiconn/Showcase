@@ -22,6 +22,7 @@ public class ContainerShowcase extends Container {
         return blockPos;
     }
 
+    @Override
     public boolean canInteractWith(EntityPlayer player) {
         return true;
     }

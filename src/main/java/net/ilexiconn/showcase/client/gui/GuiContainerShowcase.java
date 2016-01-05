@@ -10,6 +10,7 @@ import net.ilexiconn.showcase.server.message.MessageData;
 import net.ilexiconn.showcase.server.message.MessageUpdate;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -22,6 +23,7 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
@@ -57,12 +59,23 @@ public class GuiContainerShowcase extends GuiContainer {
     public GuiUnicodeGlyphButton buttonResetScale;
     public GuiUnicodeGlyphButton buttonResetOffset;
 
+    public int prevMouseX;
+    public int prevMouseY;
+
+    public float cameraYaw;
+    public float cameraPitch;
+    public float cameraOffsetX;
+    public float cameraOffsetY;
+
+    public float cameraZoom = 1.0F;
+
     public GuiContainerShowcase(ContainerShowcase container) {
         super(container);
         showcase = container;
         blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
     }
 
+    @Override
     public void initGui() {
         super.initGui();
         for (IModel model : ShowcaseAPI.getModelList()) {
@@ -110,6 +123,7 @@ public class GuiContainerShowcase extends GuiContainer {
         }
     }
 
+    @Override
     public void actionPerformed(GuiButton button) throws IOException {
         if (button.id == ButtonIds.HIDE.ordinal()) {
             if (blockEntity.collapsedMenu) {
@@ -238,6 +252,7 @@ public class GuiContainerShowcase extends GuiContainer {
         }
     }
 
+    @Override
     public void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
         if (ShowcaseAPI.getModelCount() == 0) {
             String s = I18n.format("gui.showcase.empty");
@@ -247,8 +262,13 @@ public class GuiContainerShowcase extends GuiContainer {
             GlStateManager.pushMatrix();
             startGlScissor(menuSize, 40, width, height - 80);
             GlStateManager.enableBlend();
+            GlStateManager.disableCull();
             GlStateManager.color(1f, 1f, 1f, 1f);
             GlStateManager.translate(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
+            GlStateManager.translate(-cameraOffsetX * 10, cameraOffsetY * 10, 0.0F);
+            GlStateManager.rotate(cameraPitch, 1.0F, 0.0F, 0.0F);
+            GlStateManager.rotate(cameraYaw, 0.0F, 1.0F, 0.0F);
+            GlStateManager.scale(cameraZoom, cameraZoom, cameraZoom);
             GlStateManager.scale(-40f, 40f, 40f);
             GlStateManager.rotate(180f, 0f, 1f, 0f);
             GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
@@ -264,6 +284,10 @@ public class GuiContainerShowcase extends GuiContainer {
                 GlStateManager.pushMatrix();
                 GlStateManager.color(1f, 1f, 1f, 1f);
                 GlStateManager.translate(menuSize + (width - menuSize) / 2, (height - 40) / 2, 512f);
+                GlStateManager.translate(-cameraOffsetX * 10, cameraOffsetY * 10, 0.0F);
+                GlStateManager.rotate(cameraPitch, 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotate(cameraYaw, 0.0F, 1.0F, 0.0F);
+                GlStateManager.scale(cameraZoom, cameraZoom, cameraZoom);
                 GlStateManager.scale(-40f, 40f, 40f);
                 GlStateManager.rotate(180f, 0f, 1f, 0f);
                 GlStateManager.rotate(35.264f, 1.0f, 0.0f, 0.0f);
@@ -272,10 +296,30 @@ public class GuiContainerShowcase extends GuiContainer {
                 GlStateManager.disableLighting();
                 GlStateManager.disableCull();
                 GlStateManager.disableBlend();
-                RenderGlobal.drawOutlinedBoundingBox(box, 16777215);
+                RenderGlobal.drawSelectionBoundingBox(box);
                 GlStateManager.popMatrix();
             }
             endGlScissor();
+
+            if (Mouse.isButtonDown(0)) {
+                if (GuiScreen.isShiftKeyDown() || Mouse.isButtonDown(2)) {
+                    float factor = 0.0125F;
+                    cameraOffsetX += (prevMouseX - mouseX) * factor;
+                    cameraOffsetY -= (prevMouseY - mouseY) * factor;
+                } else {
+                    if (GuiScreen.isCtrlKeyDown()) {
+                        float factor = 0.0125F;
+                        cameraZoom += (prevMouseY - mouseY) * factor;
+                    } else {
+                        float factor = 0.5F;
+                        cameraYaw -= (prevMouseX - mouseX) * factor;
+                        cameraPitch += (prevMouseY - mouseY) * factor;
+                    }
+                }
+            }
+
+            prevMouseX = mouseX;
+            prevMouseY = mouseY;
 
             modelList.drawScreen(mouseX, mouseY, partialTicks);
             menuSize = (int) (listWidth + modelList.getTranslation());
@@ -326,7 +370,7 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public void startGlScissor(int x, int y, int width, int height) {
         Minecraft mc = Minecraft.getMinecraft();
-        ScaledResolution resolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+        ScaledResolution resolution = new ScaledResolution(mc);
         double scaleW = (double) mc.displayWidth / resolution.getScaledWidth_double();
         double scaleH = (double) mc.displayHeight / resolution.getScaledHeight_double();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
@@ -337,6 +381,7 @@ public class GuiContainerShowcase extends GuiContainer {
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
+    @Override
     public void updateScreen() {
         if (mc.theWorld.getBlockState(showcase.getBlockPos()).getBlock() != Showcase.blockShowcase) {
             mc.displayGuiScreen(null);
