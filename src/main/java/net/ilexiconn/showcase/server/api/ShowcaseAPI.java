@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.log.LoggerHelper;
+import net.ilexiconn.showcase.server.api.exception.DuplicateModelsException;
+import net.ilexiconn.showcase.server.api.exception.ModelParserNotFoundException;
 import net.ilexiconn.showcase.server.api.model.*;
 
 import java.io.File;
@@ -137,10 +139,6 @@ public class ShowcaseAPI {
             }
         }
         return i;
-    }
-
-    public static <T extends IModel> T getTypeFor(IModelParser<? extends IModel> modelParser) {
-        return null;
     }
 
     public static void reloadModels() {

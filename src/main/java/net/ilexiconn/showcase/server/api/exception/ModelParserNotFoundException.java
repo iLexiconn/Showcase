@@ -1,4 +1,4 @@
-package net.ilexiconn.showcase.server.api.model;
+package net.ilexiconn.showcase.server.api.exception;
 
 import com.google.common.annotations.Beta;
 
