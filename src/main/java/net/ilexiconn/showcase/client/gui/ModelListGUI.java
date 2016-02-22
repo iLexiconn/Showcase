@@ -1,8 +1,8 @@
 package net.ilexiconn.showcase.client.gui;
 
-import net.ilexiconn.showcase.api.ShowcaseAPI;
-import net.ilexiconn.showcase.api.model.IModel;
-import net.ilexiconn.showcase.api.model.IModelParser;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.model.IModel;
+import net.ilexiconn.showcase.server.api.model.IModelParser;
 import net.ilexiconn.showcase.client.AnimationHandler;
 import net.ilexiconn.showcase.server.confg.ShowcaseConfig;
 import net.minecraft.client.Minecraft;
@@ -16,22 +16,22 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class GuiModelList extends GuiScrollingList {
-    private GuiContainerShowcase parent;
+public class ModelListGUI extends GuiScrollingList {
+    private ShowcaseGUI parent;
     private float translationTarget = 0f;
     private float translation = 0f;
 
-    public GuiModelList(GuiContainerShowcase screen, int width) {
+    public ModelListGUI(ShowcaseGUI screen, int width) {
         super(screen.mc, width, screen.height, 0, screen.height, 0, 35, screen.width, screen.height);
         parent = screen;
     }
 
-    public void setTranslation(float translation) {
-        translationTarget = translation;
-    }
-
     public float getTranslation() {
         return translation;
+    }
+
+    public void setTranslation(float translation) {
+        translationTarget = translation;
     }
 
     public void forceTranslation(float forcedTranslation) {

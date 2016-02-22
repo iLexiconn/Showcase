@@ -1,6 +1,6 @@
 package net.ilexiconn.showcase.server.message;
 
-import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
+import net.ilexiconn.showcase.server.block.entity.ShowcaseBlockEntity;
 
 import java.lang.reflect.Field;
 
@@ -19,7 +19,7 @@ public enum MessageData {
 
     MessageData(String name, Class<?> type) {
         try {
-            field = BlockEntityShowcase.class.getField(name);
+            field = ShowcaseBlockEntity.class.getField(name);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }

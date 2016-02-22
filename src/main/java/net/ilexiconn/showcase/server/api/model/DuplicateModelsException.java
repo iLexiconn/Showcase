@@ -1,4 +1,4 @@
-package net.ilexiconn.showcase.api.model;
+package net.ilexiconn.showcase.server.api.model;
 
 import com.google.common.annotations.Beta;
 import net.minecraftforge.fml.common.LoaderException;

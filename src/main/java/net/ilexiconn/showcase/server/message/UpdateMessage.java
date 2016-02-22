@@ -3,7 +3,7 @@ package net.ilexiconn.showcase.server.message;
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -11,22 +11,22 @@ import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MessageUpdate extends AbstractMessage<MessageUpdate> {
+public class UpdateMessage extends AbstractMessage<UpdateMessage> {
     public BlockPos blockPos;
     public Object object;
     public MessageData messageData;
 
-    public MessageUpdate() {
+    public UpdateMessage() {
 
     }
 
-    public MessageUpdate(BlockPos pos, Object value, MessageData data) {
+    public UpdateMessage(BlockPos pos, Object value, MessageData data) {
         blockPos = pos;
         object = value;
         messageData = data;
     }
 
-    public MessageUpdate(MessageUpdate message) {
+    public UpdateMessage(UpdateMessage message) {
         blockPos = message.blockPos;
         object = message.object;
         messageData = message.messageData;
@@ -34,7 +34,7 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void handleClientMessage(MessageUpdate message, EntityPlayer player) {
+    public void handleClientMessage(UpdateMessage message, EntityPlayer player) {
         try {
             Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
@@ -44,13 +44,13 @@ public class MessageUpdate extends AbstractMessage<MessageUpdate> {
     }
 
     @Override
-    public void handleServerMessage(MessageUpdate message, EntityPlayer player) {
+    public void handleServerMessage(UpdateMessage message, EntityPlayer player) {
         try {
             Showcase.logger.debug("Setting " + message.messageData.getField().getName() + " to " + message.object + " on " + FMLCommonHandler.instance().getEffectiveSide() + " side");
             message.messageData.getField().set(player.worldObj.getTileEntity(message.blockPos), message.object);
-            Showcase.networkWrapper.sendToAll(new MessageUpdate(message));
+            Showcase.networkWrapper.sendToAll(new UpdateMessage(message));
             if (message.object instanceof String) {
-                Showcase.networkWrapper.sendToAll(new MessageSend(ShowcaseAPI.getModel((String) message.object), message.blockPos));
+                Showcase.networkWrapper.sendToAll(new SendMessage(ShowcaseAPI.getModel((String) message.object), message.blockPos));
             }
         } catch (IllegalAccessException e) {
             e.printStackTrace();

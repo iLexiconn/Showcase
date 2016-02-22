@@ -2,38 +2,38 @@ package net.ilexiconn.showcase.server.message;
 
 import io.netty.buffer.ByteBuf;
 import net.ilexiconn.llibrary.common.message.AbstractMessage;
-import net.ilexiconn.showcase.api.ShowcaseAPI;
-import net.ilexiconn.showcase.api.model.IModel;
-import net.ilexiconn.showcase.api.model.IModelParser;
-import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.model.IModel;
+import net.ilexiconn.showcase.server.api.model.IModelParser;
+import net.ilexiconn.showcase.server.block.entity.ShowcaseBlockEntity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.fml.common.network.ByteBufUtils;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MessageSend extends AbstractMessage<MessageSend> {
+public class SendMessage extends AbstractMessage<SendMessage> {
     public IModel model;
     public BlockPos blockPos;
 
-    public MessageSend() {
+    public SendMessage() {
 
     }
 
-    public MessageSend(IModel model, BlockPos pos) {
+    public SendMessage(IModel model, BlockPos pos) {
         this.model = model;
         this.blockPos = pos;
     }
 
     @Override
     @SideOnly(Side.CLIENT)
-    public void handleClientMessage(MessageSend messageSend, EntityPlayer entityPlayer) {
-        ShowcaseAPI.addModel(messageSend.model);
-        ((BlockEntityShowcase) entityPlayer.worldObj.getTileEntity(messageSend.blockPos)).modelName = messageSend.model.getName();
+    public void handleClientMessage(SendMessage message, EntityPlayer entityPlayer) {
+        ShowcaseAPI.addModel(message.model);
+        ((ShowcaseBlockEntity) entityPlayer.worldObj.getTileEntity(message.blockPos)).modelName = message.model.getName();
     }
 
     @Override
-    public void handleServerMessage(MessageSend messageSend, EntityPlayer entityPlayer) {
+    public void handleServerMessage(SendMessage message, EntityPlayer entityPlayer) {
 
     }
 

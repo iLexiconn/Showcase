@@ -8,10 +8,8 @@
         "authorList": [
             "iLexiconn"
         ],
-        "credits": "",
         "dependencies": [
-            "Forge",
-            "llibrary@[0.5.5,)"
+            "llibrary@[${llibrary_version},)"
         ]
     }
 ]

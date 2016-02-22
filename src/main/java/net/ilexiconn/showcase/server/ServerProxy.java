@@ -18,15 +18,15 @@ public class ServerProxy {
         }
     };
 
-    public void preInit() {
+    public void onPreInit() {
 
     }
 
-    public void init() {
+    public void onInit() {
 
     }
 
-    public void postInit() {
+    public void onPostInit() {
 
     }
 

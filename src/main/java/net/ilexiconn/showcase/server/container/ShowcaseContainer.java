@@ -5,11 +5,11 @@ import net.minecraft.inventory.Container;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
-public class ContainerShowcase extends Container {
+public class ShowcaseContainer extends Container {
     private World world;
     private BlockPos blockPos;
 
-    public ContainerShowcase(World worldIn, BlockPos pos) {
+    public ShowcaseContainer(World worldIn, BlockPos pos) {
         world = worldIn;
         blockPos = pos;
     }

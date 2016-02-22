@@ -1,6 +1,6 @@
 package net.ilexiconn.showcase.client;
 
-import net.ilexiconn.showcase.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;

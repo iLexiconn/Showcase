@@ -1,10 +1,10 @@
 package net.ilexiconn.showcase.client.render;
 
-import net.ilexiconn.showcase.api.ShowcaseAPI;
-import net.ilexiconn.showcase.api.model.IModel;
-import net.ilexiconn.showcase.api.model.IModelParser;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.model.IModel;
+import net.ilexiconn.showcase.server.api.model.IModelParser;
 import net.ilexiconn.showcase.client.AnimationHandler;
-import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
+import net.ilexiconn.showcase.server.block.entity.ShowcaseBlockEntity;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderGlobal;
@@ -18,11 +18,11 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 
 @SideOnly(Side.CLIENT)
-public class RenderEntityShowcase extends TileEntitySpecialRenderer<BlockEntityShowcase> {
+public class ShowcaseEntityRenderer extends TileEntitySpecialRenderer<ShowcaseBlockEntity> {
     public AxisAlignedBB box = new AxisAlignedBB(0f, 0f, 0f, 1f, 1f, 1f);
 
     @Override
-    public void renderTileEntityAt(BlockEntityShowcase tileEntity, double posX, double posY, double posZ, float f, int i) {
+    public void renderTileEntityAt(ShowcaseBlockEntity tileEntity, double posX, double posY, double posZ, float f, int i) {
         tileEntity.modelRotationCurrent = AnimationHandler.smoothUpdate(tileEntity.modelRotationCurrent, tileEntity.modelRotation);
         tileEntity.modelScaleCurrent = AnimationHandler.smoothUpdate(tileEntity.modelScaleCurrent, tileEntity.modelScale);
         tileEntity.modelOffsetXCurrent = AnimationHandler.smoothUpdate(tileEntity.modelOffsetXCurrent, tileEntity.modelOffsetX);

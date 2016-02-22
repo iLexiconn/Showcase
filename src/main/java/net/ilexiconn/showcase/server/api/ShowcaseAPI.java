@@ -1,11 +1,11 @@
-package net.ilexiconn.showcase.api;
+package net.ilexiconn.showcase.server.api;
 
 import com.google.common.annotations.Beta;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.log.LoggerHelper;
-import net.ilexiconn.showcase.api.model.*;
+import net.ilexiconn.showcase.server.api.model.*;
 
 import java.io.File;
 import java.io.IOException;

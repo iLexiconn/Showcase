@@ -6,7 +6,7 @@ import net.ilexiconn.llibrary.client.model.tabula.ModelJson;
 import net.ilexiconn.llibrary.common.crash.SimpleCrashReport;
 import net.ilexiconn.llibrary.common.json.JsonFactory;
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.model.IModelParser;
+import net.ilexiconn.showcase.server.api.model.IModelParser;
 import net.ilexiconn.showcase.server.util.ByteBufUtil;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraftforge.fml.relauncher.Side;

@@ -1,6 +1,6 @@
 package net.ilexiconn.showcase.client.gui;
 
-public enum ButtonIds {
+public enum ButtonIDs {
     HIDE,
     ROTATE,
     SCALE,

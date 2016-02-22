@@ -1,7 +1,7 @@
 package net.ilexiconn.showcase.server.block;
 
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
+import net.ilexiconn.showcase.server.block.entity.ShowcaseBlockEntity;
 import net.minecraft.block.BlockContainer;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -13,8 +13,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
-public class BlockShowcase extends BlockContainer {
-    public BlockShowcase() {
+public class ShowcaseBlock extends BlockContainer {
+    public ShowcaseBlock() {
         super(Material.rock);
         setUnlocalizedName("showcase");
         setCreativeTab(CreativeTabs.tabDecorations);
@@ -54,6 +54,6 @@ public class BlockShowcase extends BlockContainer {
 
     @Override
     public TileEntity createNewTileEntity(World world, int meta) {
-        return new BlockEntityShowcase();
+        return new ShowcaseBlockEntity();
     }
 }

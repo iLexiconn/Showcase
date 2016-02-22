@@ -1,14 +1,17 @@
 package net.ilexiconn.showcase.client.model;
 
-import net.ilexiconn.showcase.api.model.IFallbackModel;
+import net.ilexiconn.showcase.server.api.model.IFallbackModel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class ModelQuestionMark extends ModelBase implements IFallbackModel {
+@SideOnly(Side.CLIENT)
+public class QuestionMarkModel extends ModelBase implements IFallbackModel {
     public ResourceLocation texture = new ResourceLocation("showcase", "textures/models/error.png");
 
     public ModelRenderer shape1;
@@ -22,7 +25,7 @@ public class ModelQuestionMark extends ModelBase implements IFallbackModel {
     public ModelRenderer shape4sub1;
     public ModelRenderer shape5sub1;
 
-    public ModelQuestionMark() {
+    public QuestionMarkModel() {
         textureWidth = 32;
         textureHeight = 32;
         shape5sub1 = new ModelRenderer(this, 0, 0);

@@ -19,13 +19,6 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "com.matthewprenger.cursegradle"
 
-ext.configFile = file "build.properties"
-configFile.withReader {
-    def prop = new Properties()
-    prop.load(it)
-    project.ext.config = new ConfigSlurper().parse prop
-}
-
 def secretFile = file "secret.properties"
 project.ext.secret = null
 if (secretFile.exists()) {
@@ -36,16 +29,16 @@ if (secretFile.exists()) {
     }
 }
 
-version = getVersionFromJava()
-group = config.mod_group
-archivesBaseName = config.mod_name
+version = getVersion("VERSION") + "-1.8.9"
+def llibrary_version = getVersion("LLIBRARY_VERSION")
+group = "net.ilexiconn"
+archivesBaseName = "showcase"
 sourceCompatibility = targetCompatibility = 1.6
 
 minecraft {
-    version = config.minecraft_version + "-" + config.forge_version
+    version = "1.8.9-11.15.1.1758"
     runDir = "minecraft"
     mappings = "stable_20"
-    replace "${version}", project.version
 }
 
 repositories {
@@ -57,20 +50,20 @@ repositories {
 }
 
 dependencies {
-    compile "net.ilexiconn:llibrary:${config.llibrary_version}-${config.minecraft_version}:dev"
+    compile "net.ilexiconn:llibrary:$llibrary_version-1.8.9:dev"
 }
 
 processResources {
-    inputs.property "version", getVersionFromJava()
+    inputs.property "version", project.version
     inputs.property "mcversion", project.minecraft.version
+    inputs.property "llibrary_version", llibrary_version
 
-    from(sourceSets.main.resources.srcDirs) {
+    from (sourceSets.main.resources.srcDirs) {
         include "mcmod.info"
-        expand "version": project.version
-        expand "mcversion": project.minecraft.version
+        expand "version": project.version, "mcversion": project.minecraft.version, "llibrary_version": llibrary_version
     }
-
-    from(sourceSets.main.resources.srcDirs) {
+        
+    from (sourceSets.main.resources.srcDirs) {
         exclude "mcmod.info"
     }
 }
@@ -88,15 +81,8 @@ artifacts {
 
 import groovy.json.JsonSlurper
 curseforge {
-    def url = "https://github.com/iLexiconn/Showcase/raw/version/versions.json".toURL()
+    def url = "http://pastebin.com/raw/q0VdpSxU".toURL()
     def versions = new JsonSlurper().parseText url.text
-
-    def type = "release"
-    def latestVersion = ""
-    versions.versions.each{version, changelog -> latestVersion = version}
-    if (versions.beta && versions.beta == latestVersion) {
-        type = "beta"
-    }
 
     if (secret) {
         apiKey = secret.curseForgeApiKey
@@ -107,13 +93,13 @@ curseforge {
     project {
         id = "237789"
 
-        releaseType = type
-        changelog = versions.versions[versions.getAt(type)].join("\n")
+        releaseType = "release"
+        changelog = versions.versions[versions.getAt(releaseType)].join("\n")
 
-        addGameVersion config.minecraft_version
+        addGameVersion "1.8.9"
 
         mainArtifact(jar) {
-            displayName = "Showcase " + getVersionFromJavaWithoutMc() + " for Minecraft " + config.minecraft_version
+            displayName = "Showcase " + getVersion("VERSION") + " for Minecraft 1.8.9"
         }
 
         addArtifact(sourceJar) {
@@ -126,15 +112,11 @@ curseforge {
     }
 }
 
-String getVersionFromJava() {
-    return getVersionFromJavaWithoutMc() + "-" + config.minecraft_version;
-}
-
-String getVersionFromJavaWithoutMc() {
+String getVersion(String type) {
     String major = "0";
     String revision = "0";
     String patch = "0";
-    String prefix = "public static final String VERSION = \"";
+    String prefix = "public static final String $type = \"";
     File file = file("src/main/java/net/ilexiconn/showcase/Showcase.java")
     file.eachLine { String s ->
         s = s.trim();

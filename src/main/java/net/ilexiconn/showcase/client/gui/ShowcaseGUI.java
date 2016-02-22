@@ -1,13 +1,13 @@
 package net.ilexiconn.showcase.client.gui;
 
 import net.ilexiconn.showcase.Showcase;
-import net.ilexiconn.showcase.api.ShowcaseAPI;
-import net.ilexiconn.showcase.api.model.IModel;
-import net.ilexiconn.showcase.api.model.IModelParser;
-import net.ilexiconn.showcase.server.block.entity.BlockEntityShowcase;
-import net.ilexiconn.showcase.server.container.ContainerShowcase;
+import net.ilexiconn.showcase.server.api.ShowcaseAPI;
+import net.ilexiconn.showcase.server.api.model.IModel;
+import net.ilexiconn.showcase.server.api.model.IModelParser;
+import net.ilexiconn.showcase.server.block.entity.ShowcaseBlockEntity;
+import net.ilexiconn.showcase.server.container.ShowcaseContainer;
 import net.ilexiconn.showcase.server.message.MessageData;
-import net.ilexiconn.showcase.server.message.MessageUpdate;
+import net.ilexiconn.showcase.server.message.UpdateMessage;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -29,11 +29,11 @@ import org.lwjgl.opengl.GL11;
 import java.io.IOException;
 
 @SideOnly(Side.CLIENT)
-public class GuiContainerShowcase extends GuiContainer {
+public class ShowcaseGUI extends GuiContainer {
     public Minecraft mc = Minecraft.getMinecraft();
-    public ContainerShowcase showcase;
-    public BlockEntityShowcase blockEntity;
-    public GuiModelList modelList;
+    public ShowcaseContainer showcase;
+    public ShowcaseBlockEntity blockEntity;
+    public ModelListGUI modelList;
     public int listWidth;
 
     public AxisAlignedBB box = new AxisAlignedBB(-0.5f, 0.5f, -0.5f, 0.5f, 1.5f, 0.5f);
@@ -69,10 +69,10 @@ public class GuiContainerShowcase extends GuiContainer {
 
     public float cameraZoom = 1.0F;
 
-    public GuiContainerShowcase(ContainerShowcase container) {
+    public ShowcaseGUI(ShowcaseContainer container) {
         super(container);
         showcase = container;
-        blockEntity = (BlockEntityShowcase) showcase.getWorld().getTileEntity(showcase.getBlockPos());
+        blockEntity = (ShowcaseBlockEntity) showcase.getWorld().getTileEntity(showcase.getBlockPos());
     }
 
     @Override
@@ -83,49 +83,49 @@ public class GuiContainerShowcase extends GuiContainer {
             listWidth = Math.max(listWidth, fontRendererObj.getStringWidth(model.getAuthor()));
         }
         listWidth = Math.min(listWidth, 150);
-        modelList = new GuiModelList(this, listWidth);
+        modelList = new ModelListGUI(this, listWidth);
 
         if (ShowcaseAPI.getModelCount() > 0) {
             selectedModel = ShowcaseAPI.getModel(blockEntity.modelName);
             selectedIndex = ShowcaseAPI.getModelIndex(selectedModel);
             if (blockEntity.collapsedMenu) {
-                buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), 5, 10, 20, 20, ">");
+                buttonHide = new GuiButton(ButtonIDs.HIDE.ordinal(), 5, 10, 20, 20, ">");
                 modelList.forceTranslation(listWidth);
             } else {
-                buttonHide = new GuiButton(ButtonIds.HIDE.ordinal(), listWidth + 5, 10, 20, 20, "<");
+                buttonHide = new GuiButton(ButtonIDs.HIDE.ordinal(), listWidth + 5, 10, 20, 20, "<");
                 modelList.forceTranslation(0);
             }
             buttonList.add(buttonHide);
 
-            buttonList.add(buttonRotateLeft = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, "<"));
-            buttonList.add(buttonRotateRight = new GuiButton(ButtonIds.ROTATE.ordinal(), 0, height - 25, 20, 20, ">"));
+            buttonList.add(buttonRotateLeft = new GuiButton(ButtonIDs.ROTATE.ordinal(), 0, height - 25, 20, 20, "<"));
+            buttonList.add(buttonRotateRight = new GuiButton(ButtonIDs.ROTATE.ordinal(), 0, height - 25, 20, 20, ">"));
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 15;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
 
-            buttonList.add(buttonScalePlus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "^"));
-            buttonList.add(buttonScaleMinus = new GuiButton(ButtonIds.SCALE.ordinal(), 0, height - 25, 20, 20, "v"));
+            buttonList.add(buttonScalePlus = new GuiButton(ButtonIDs.SCALE.ordinal(), 0, height - 25, 20, 20, "^"));
+            buttonList.add(buttonScaleMinus = new GuiButton(ButtonIDs.SCALE.ordinal(), 0, height - 25, 20, 20, "v"));
             buttonScalePlus.enabled = blockEntity.modelScale <= 31;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 1;
 
-            buttonList.add(buttonBox = new GuiButton(ButtonIds.BOX.ordinal(), width - 25, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
+            buttonList.add(buttonBox = new GuiButton(ButtonIDs.BOX.ordinal(), width - 25, 15, 20, 20, blockEntity.drawBox ? "O" : "X"));
 
-            buttonList.add(buttonOffsetLeft = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 75, height - 25, 20, 20, "<"));
-            buttonList.add(buttonOffsetRight = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
-            buttonList.add(buttonOffsetForward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
-            buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIds.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
-            buttonList.add(buttonOffsetUp = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
-            buttonList.add(buttonOffsetDown = new GuiButtonExt(ButtonIds.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
+            buttonList.add(buttonOffsetLeft = new GuiButton(ButtonIDs.OFFSET.ordinal(), width - 75, height - 25, 20, 20, "<"));
+            buttonList.add(buttonOffsetRight = new GuiButton(ButtonIDs.OFFSET.ordinal(), width - 25, height - 25, 20, 20, ">"));
+            buttonList.add(buttonOffsetForward = new GuiButton(ButtonIDs.OFFSET.ordinal(), width - 50, height - 25, 20, 20, "v"));
+            buttonList.add(buttonOffsetBackward = new GuiButton(ButtonIDs.OFFSET.ordinal(), width - 50, height - 50, 20, 20, "^"));
+            buttonList.add(buttonOffsetUp = new GuiButtonExt(ButtonIDs.OFFSET.ordinal(), width - 67, height - 43, 12, 12, "^"));
+            buttonList.add(buttonOffsetDown = new GuiButtonExt(ButtonIDs.OFFSET.ordinal(), width - 25, height - 43, 12, 12, "v"));
 
-            buttonList.add(buttonResetRotation = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
-            buttonList.add(buttonResetScale = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
-            buttonList.add(buttonResetOffset = new GuiUnicodeGlyphButton(ButtonIds.RESET.ordinal(), width - 91, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetRotation = new GuiUnicodeGlyphButton(ButtonIDs.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetScale = new GuiUnicodeGlyphButton(ButtonIDs.RESET.ordinal(), 0, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
+            buttonList.add(buttonResetOffset = new GuiUnicodeGlyphButton(ButtonIDs.RESET.ordinal(), width - 91, height - 17, 12, 12, "", GuiUtils.UNDO_CHAR, 1.2f));
 
         }
     }
 
     @Override
     public void actionPerformed(GuiButton button) throws IOException {
-        if (button.id == ButtonIds.HIDE.ordinal()) {
+        if (button.id == ButtonIDs.HIDE.ordinal()) {
             if (blockEntity.collapsedMenu) {
                 modelList.setTranslation(0);
                 blockEntity.collapsedMenu = false;
@@ -135,8 +135,8 @@ public class GuiContainerShowcase extends GuiContainer {
                 blockEntity.collapsedMenu = true;
                 buttonHide.displayString = ">";
             }
-            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.collapsedMenu, MessageData.MENU));
-        } else if (button.id == ButtonIds.ROTATE.ordinal()) {
+            Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.collapsedMenu, MessageData.MENU));
+        } else if (button.id == ButtonIDs.ROTATE.ordinal()) {
             if (button == buttonRotateLeft) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelRotation += 8;
@@ -158,8 +158,8 @@ public class GuiContainerShowcase extends GuiContainer {
             }
             buttonRotateLeft.enabled = blockEntity.modelRotation <= 31;
             buttonRotateRight.enabled = blockEntity.modelRotation >= 1;
-            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
-        } else if (button.id == ButtonIds.SCALE.ordinal()) {
+            Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
+        } else if (button.id == ButtonIDs.SCALE.ordinal()) {
             if (button == buttonScalePlus) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelScale += 4;
@@ -181,73 +181,73 @@ public class GuiContainerShowcase extends GuiContainer {
             }
             buttonScalePlus.enabled = blockEntity.modelScale <= 127;
             buttonScaleMinus.enabled = blockEntity.modelScale >= 2;
-            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
-        } else if (button.id == ButtonIds.BOX.ordinal()) {
+            Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
+        } else if (button.id == ButtonIDs.BOX.ordinal()) {
             blockEntity.drawBox = !blockEntity.drawBox;
             buttonBox.displayString = blockEntity.drawBox ? "O" : "X";
-            Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.drawBox, MessageData.BOX));
-        } else if (button.id == ButtonIds.OFFSET.ordinal()) {
+            Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.drawBox, MessageData.BOX));
+        } else if (button.id == ButtonIDs.OFFSET.ordinal()) {
             if (button == buttonOffsetLeft) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetX -= 8;
                 } else {
                     blockEntity.modelOffsetX -= 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
             } else if (button == buttonOffsetRight) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetX += 8;
                 } else {
                     blockEntity.modelOffsetX += 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
             } else if (button == buttonOffsetForward) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetZ -= 8;
                 } else {
                     blockEntity.modelOffsetZ -= 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
             } else if (button == buttonOffsetBackward) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetZ += 8;
                 } else {
                     blockEntity.modelOffsetZ += 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
             } else if (button == buttonOffsetUp) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetY -= 8;
                 } else {
                     blockEntity.modelOffsetY -= 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
             } else {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) {
                     blockEntity.modelOffsetY += 8;
                 } else {
                     blockEntity.modelOffsetY += 1;
                 }
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
             }
-        } else if (button.id == ButtonIds.RESET.ordinal()) {
+        } else if (button.id == ButtonIDs.RESET.ordinal()) {
             if (button == buttonResetRotation) {
                 blockEntity.modelRotation = 0;
                 buttonRotateLeft.enabled = true;
                 buttonRotateRight.enabled = false;
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelRotation, MessageData.ROTATION));
             } else if (button == buttonResetScale) {
                 blockEntity.modelScale = 16;
                 buttonScalePlus.enabled = true;
                 buttonScaleMinus.enabled = true;
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelScale, MessageData.SCALE));
             } else {
                 blockEntity.modelOffsetX = 0;
                 blockEntity.modelOffsetY = 0;
                 blockEntity.modelOffsetZ = 0;
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
-                Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetX, MessageData.OFFSET_X));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetY, MessageData.OFFSET_Y));
+                Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelOffsetZ, MessageData.OFFSET_Z));
             }
         }
     }
@@ -361,7 +361,7 @@ public class GuiContainerShowcase extends GuiContainer {
         blockEntity.modelName = model.getName();
         selectedIndex = ShowcaseAPI.getModelIndex(model);
         selectedModel = model;
-        Showcase.networkWrapper.sendToServer(new MessageUpdate(showcase.getBlockPos(), blockEntity.modelName, MessageData.NAME));
+        Showcase.networkWrapper.sendToServer(new UpdateMessage(showcase.getBlockPos(), blockEntity.modelName, MessageData.NAME));
     }
 
     public boolean isSelected(int index) {

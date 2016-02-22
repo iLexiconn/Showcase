@@ -9,7 +9,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockEntityShowcase extends TileEntity {
+public class ShowcaseBlockEntity extends TileEntity {
     public String modelName = "";
 
     public int modelRotation = 0;

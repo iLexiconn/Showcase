@@ -1,5 +1,4 @@
 @API(owner = "showcase", apiVersion = ShowcaseAPI.VERSION, provides = "showcase-api")
-package net.ilexiconn.showcase.api.model;
+package net.ilexiconn.showcase.server.api;
 
-import net.ilexiconn.showcase.api.ShowcaseAPI;
 import net.minecraftforge.fml.common.API;
